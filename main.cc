@@ -2,6 +2,6 @@
 #include <constants.h>
 int main ()
 {
-    Game g { "Example Program", screen_width, screen_height };
+    Game g { "8 Ball Pool", screen_width, screen_height };
     g.start ();
-}//111
+}
