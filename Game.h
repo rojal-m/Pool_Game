@@ -76,7 +76,7 @@ private:
     bool running;
 
 
-    void handle_events(); 
+    void handle_events();
 
     /*
      * This function puts the program to sleep for a certain
