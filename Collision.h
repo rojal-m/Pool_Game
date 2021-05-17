@@ -18,5 +18,3 @@ public:
   double power{};
 
 };
-
-#endif
