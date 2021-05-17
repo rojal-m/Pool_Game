@@ -39,7 +39,7 @@ public:
   plain_ball();
 
 private:
-  int plyaer;
+  int player;
 };
 
 class spot_ball: public Ball
