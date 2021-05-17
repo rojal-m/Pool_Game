@@ -73,12 +73,13 @@ private:
 class Hole
 {
 public:
-  Hole(Texture& t, Ball & b);
+  Hole();
   bool is_in(Ball& b);
-  void if_in(bool x);
+  void if_in(bool x, int p);
 
 private:
-  Vector2i position;
+  Vector2i ball_position;
+  int points;
 };
 
 class Wall
@@ -86,7 +87,7 @@ class Wall
 public:
   Wall(Texture & t);
   bool is_hit();
-  void if_hit(bool y);
+  void if_hit(bool x);
 
 private:
   double length;
