@@ -12,7 +12,7 @@ public:
   bool vs_player();
   void handle_event(sf::Event e) ;
   void update() ;
-  void render(sf::RenderWindow & target) ;
+  void render(sf::RenderTarget & target) ;
   int get_next_state() ;
 
 
