@@ -2,17 +2,6 @@
 
 /*
  * In this file we define some global constants.
- *
- * Please note that the problem with global variables
- * is that anyone can change them whenever which makes
- * it extremely hard to reason about your code. But for
- * constants, this is not a problem since we cannot
- * change them, and therefore they stay the same during
- * the entire execution of the program.
- */
-
-/*
- * define the size of the window.
  */
 int const screen_width  { 1000 };
 int const screen_height { 1000 };
