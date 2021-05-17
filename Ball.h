@@ -1,5 +1,4 @@
 #pragma once
-
 #include <SFML/Graphics.hpp>
 
 
@@ -7,7 +6,6 @@ class Ball
 {
   public:
     Ball(Texture& t);
-
     void update();
     void draw(RenderWindow& w);
     void onShoot(float&p,float r);
@@ -17,8 +15,43 @@ private:
     Vector2f ball_position;
     Vector2f velocity;
 
-
   };
+
+class Snooker: public Ball
+{
+public:
+  Snooker();
+  bool correct_hit();
+  void if_wrong_hit(bool);
+
+};
+
+class Eight_Ball: public Ball
+{
+public:
+  Eight_Ball();
+private:
+  bool last_ball();
+
+};
+
+class plain_ball: public Ball
+{
+public:
+  plain_ball();
+private:
+  int plyaer;
+};
+
+class spot_ball: public Ball
+{
+public:
+  spot_ball();
+private:
+  int player;
+
+};
+
 
 class Stick
 {
@@ -41,8 +74,10 @@ private:
 class Hole
 {
 public:
-bool is_in(Ball& b);
-void if_in(bool x);
+
+  Hole(Texture& t, Ball & b);
+  bool is_in(Ball& b);
+  void if_in(bool x);
 
 private:
   Vector2i position;
@@ -52,6 +87,7 @@ private:
 class Wall
 {
 public:
+  Wall(Texture & t);
   bool is_hit();
   void if_hit(bool y);
 
@@ -59,5 +95,4 @@ public:
 private:
   double length;
   Vector2i position;
-
 };
