@@ -24,7 +24,7 @@ void Menu_State::handle_event(sf::Event event)
     }
 }
 
-void Menu_State :: render (RenderWindow & target)
+void Menu_State :: render (RenderTarget & target)
 {
     auto bounds { text.getGlobalBounds () };
     auto size   { target.getSize () };
