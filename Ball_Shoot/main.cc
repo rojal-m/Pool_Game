@@ -5,16 +5,20 @@
 #include <vector>
 #include <iterator>
 #include <algorithm>
+#include <utility>
 using namespace sf;
 
 int const width  { 1500 };
 int const height { 825 };
 float const pi{3.14159265359};
-float const delta = 177;
-float const BALL_DIAMETER = 38;
+float const delta = 100;
+float const BALL_DIAMETER = 36;
+float const MAX_POWER = 3000;
+float const FRICTION {0.985};
+double const fps { 120.0 };
 
 template<typename T>
-auto dot(Vector2<T> const& Left, Vector2<T> const& Right)
+float dot(Vector2<T> const& Left, Vector2<T> const& Right)
 {
   return Left.x * Right.x + Left.y * Right.y;
 }
@@ -22,6 +26,12 @@ auto dot(Vector2<T> const& Left, Vector2<T> const& Right)
 float length(Vector2f const& v)
 {
   return sqrt(powf(v.x,2)+powf(v.y,2));
+}
+
+template<typename T>
+float distFrom(Vector2<T> const& Left, Vector2<T> const& Right)
+{
+  return length(Left - Right);
 }
 
 enum Col
@@ -32,16 +42,35 @@ enum Col
       WHITE = 4
     };
 
+std::vector<std::pair<Vector2f,Col>> const ConstantBalls
+{
+  {Vector2f{413,413},Col::WHITE},
+  {Vector2f{1022,413},Col::YELLOW},
+  {Vector2f{1056,393},Col::YELLOW},
+  {Vector2f{1056,433},Col::RED},
+  {Vector2f{1090,374},Col::RED},
+  {Vector2f{1090,413},Col::BLACK},
+  {Vector2f{1090,452},Col::YELLOW},
+  {Vector2f{1126,354},Col::YELLOW},
+  {Vector2f{1126,393},Col::RED},
+  {Vector2f{1126,433},Col::YELLOW},
+  {Vector2f{1126,472},Col::RED},
+  {Vector2f{1162,335},Col::RED},
+  {Vector2f{1162,374},Col::RED},
+  {Vector2f{1162,413},Col::YELLOW},
+  {Vector2f{1162,452},Col::RED},
+  {Vector2f{1162,491},Col::YELLOW},
+    };
 class Item
 {
-  public:
+public:
   Texture Background;
   Texture Stick;
   Texture W_B;
   Texture B_B;
   Texture B1;
   Texture B2;
-  
+
   Texture loadTexture(std::string const& s)
   {
     Texture T;
@@ -50,7 +79,7 @@ class Item
     //Texture::bind(&T);
     return T;
   }
-  
+
   Item()
     :Background{loadTexture("background.png")},
      Stick{loadTexture("stick.png")},
@@ -58,7 +87,7 @@ class Item
      B_B{loadTexture("black_ball.png")},
      B1{loadTexture("red_ball.png")},
      B2{loadTexture("yellow_ball.png")} {}
-  
+
   Texture const& getBallTextureByColor(Col C)
   {
     switch(C)
@@ -75,11 +104,29 @@ class Item
     throw std::invalid_argument{"Wrong Ball Color"};
   }
 };
-class Game
+
+class Wall
 {
+public:
+  float topY;
+  float rightX;
+  float bottomY;
+  float leftX;
+  Wall()
+    : topY{57},rightX{1443},bottomY{768},leftX{57}
+  {}
 };
-class GameWorld
+class Hole
 {
+public:
+  float radius{46};
+  std::vector<Vector2f> position{
+    Vector2f{750,32},
+      Vector2f{750,794},
+	Vector2f{62,62},
+	  Vector2f{1435,62},
+	    Vector2f{62,762},
+	      Vector2f{1435,762}};
 };
 //-------------------------------------------------------------------------------------
 class Ball
@@ -90,24 +137,27 @@ public:
   Vector2f position;
   Vector2f velocity;
   bool moving;
-  Ball(Vector2f const& Pos, Texture const& t)
-    :ball{t}, position{Pos}, velocity{0,0}, moving{false}
+  Col color;
+  bool visible;
+  Ball(Vector2f const& Pos, Item & I, Col c)
+    :ball{I.getBallTextureByColor(c)}, position{Pos}, velocity{0,0}, moving{false}, color{c}, visible{true}
   {
     auto a = ball.getGlobalBounds();
     ball.setOrigin(a.width/2,a.height/2);
   }
   void update()
   {
+    if(!visible)
+      return;
     //std::cout<<velocity.x<<" "<<velocity.y<<"\n";
-    position.x += velocity.x/delta;
-    position.y += velocity.y/delta;
+    position += velocity/delta;
 
-    
-    
+
+
     //std::cout<<velocity.x<<" "<<(velocity.x /delta)<<" "<<velocity.y<<"\n";
-    velocity =  velocity*0.984f;
+    velocity =  velocity*FRICTION;
 
-    if(length(velocity) < 5)
+    if(length(velocity) < 10)
     {
       velocity.x = 0;
       velocity.y = 0;
@@ -116,6 +166,8 @@ public:
   }
   void draw(RenderWindow& w)
   {
+    if(!visible)
+      return;
     ball.setPosition(position);
     w.draw(ball);
   }
@@ -126,19 +178,37 @@ public:
     //std::cout<<velocity.x<<" "<<velocity.y<<"\n";
     moving = true;
   }
+  void handleBallInHole(Hole const& h)
+  {
+    if(!visible)
+      return;
+    bool inHole{};
+    Vector2f pos{position};
+    std::for_each(h.position.begin(),h.position.end(),[&inHole,&h,&pos](auto const& p){
+	inHole += distFrom(pos,p) <= h.radius;
+
+
+      });
+    if(!inHole)
+	{return;}
+    visible = false;
+    moving = false;
+  }
   void collideWith(Ball & B)
   {
+    if(!visible || !B.visible)
+      return;
     //find normal vector
     const auto n{position - B.position};
-    
-    //find distance 
+
+    //find distance
     const auto dist{length(n)};
     if(dist > BALL_DIAMETER)
       return;
     const auto mtd{n*((BALL_DIAMETER-dist)/dist)};
     position = position + mtd*(0.5f);
     B.position = B.position - mtd*(0.5f);
-    
+
     //find unit normal vector
     const auto un{n*(1/length(n))};
     //find unit tangent vector
@@ -149,7 +219,7 @@ public:
     const auto v2n{dot(un,B.velocity)};
     const auto v2t{dot(ut,B.velocity)};
 
-    
+
     const auto v1nTag{un*v2n};
     const auto v1tTag{ut*v1t};
     const auto v2nTag{un*v1n};
@@ -161,6 +231,40 @@ public:
     moving = true;
     B.moving = true;
   }
+  void collideWith(Wall & w)
+  {
+    if(!visible || !moving)
+      return;
+    bool collided = false;
+    if(position.y <= w.topY+(BALL_DIAMETER/2))
+    {
+      position.y = w.topY+(BALL_DIAMETER/2);
+      velocity = Vector2f{velocity.x,-velocity.y};
+      collided = true;
+    }
+    if(position.x >= w.rightX-(BALL_DIAMETER/2))
+    {
+      position.x = w.rightX-(BALL_DIAMETER/2);
+      velocity = Vector2f{-velocity.x,velocity.y};
+      collided = true;
+    }
+    if(position.y >= w.bottomY-(BALL_DIAMETER/2))
+    {
+      position.y = w.bottomY-(BALL_DIAMETER/2);
+      velocity = Vector2f{velocity.x,-velocity.y};
+      collided = true;
+    }
+    if(position.x <= w.leftX+(BALL_DIAMETER/2))
+    {
+      position.x = w.leftX+(BALL_DIAMETER/2);
+      velocity = Vector2f{-velocity.x,velocity.y};
+      collided = true;
+    }
+
+    if(collided)
+      velocity *= FRICTION;
+
+  }
 };
 //---------------------------------------------------------------------------------------
 class Stick
@@ -169,20 +273,31 @@ private:
   Sprite stick;
   Vector2f position;
   float rotation;
-  Ball& Wball;
-  
+
+
 public:
   bool shot;
   float power;
-  Stick(Texture& t,Ball & b)
-    :stick{t}, position{}, rotation {0}, Wball{b}, shot{false}, power{0}
+  Stick(Texture& t)
+    :stick{t}, position{}, rotation {0}, shot{false}, power{0}
   {
     stick.setOrigin(970,11);
     position = Vector2f{413.0,413.0};
   }
-  void update(Event::MouseMoveEvent & v)
+  void update(Event & event,RenderWindow & w, Ball & Wball)
   {
-    updateRotation(v);
+    if(shot)
+    {
+      position = Vector2f{-1000,-1000};
+      return;
+    }
+
+    if (event.type == Event::MouseButtonPressed)
+      increasePower();
+    else if(event.type == Event::MouseButtonReleased && power >0)
+      shoot(Wball);
+
+    updateRotation(w);
   }
   void draw(RenderWindow& w)
   {
@@ -191,28 +306,31 @@ public:
     stick.setPosition(position);
     w.draw(stick);
   }
-  void updateRotation(Event::MouseMoveEvent & v)
+  void updateRotation(RenderWindow & w)
   {
-    float opposite = v.y - position.y;
-    float adjescent = v.x - position.x;
+    auto mp{sf::Mouse::getPosition(w)};
+    float opposite = mp.y - position.y;
+    float adjescent = mp.x - position.x;
     if(opposite < 0 && adjescent < 0)
       rotation = 180+(180*atan(opposite/adjescent))/pi;
     if(opposite > 0 && adjescent < 0)
       rotation = 180+(180*atan(opposite/adjescent))/pi;
     if(opposite < 0 && adjescent > 0)
       rotation = 360+(180*atan(opposite/adjescent))/pi;
-     if(opposite > 0 && adjescent > 0)
+    if(opposite > 0 && adjescent > 0)
       rotation = (180*atan(opposite/adjescent))/pi;
 
-     //std::cout<<rotation<<"\n";
+    //std::cout<<rotation<<"\n";
   }
   void increasePower()
   {
-    power += 100;
-    Vector2f v = stick.getOrigin(); 
+    if(power > MAX_POWER)
+      return;
+    power += 120;
+    Vector2f v = stick.getOrigin();
     stick.setOrigin(v.x+5,v.y);
   }
-  void shoot()
+  void shoot(Ball & Wball)
   {
     Wball.onShoot(power,rotation);
     power = 0;
@@ -225,8 +343,10 @@ public:
     stick.setOrigin(970,11);
     shot = false;
   }
-  
+
 };
+
+
 
 bool ballsMoving(std::vector<Ball> & b)
 {
@@ -241,54 +361,53 @@ bool ballsMoving(std::vector<Ball> & b)
   return ballsMoving;
 }
 
-void handleCollisions(std::vector<Ball> & b)
+void handleCollisions(std::vector<Ball> & b, Wall & W, Hole & h)
 {
   for(auto i{b.begin()};i != b.end(); ++i){
+    i->handleBallInHole(h);
+    i->collideWith(W);
     for(auto j{i+1};j != b.end(); ++j){
-      auto & firstBall = *i;
+      /*auto & firstBall = *i;
       auto & secondBall = *j;
-      firstBall.collideWith(secondBall);
+      firstBall.collideWith(secondBall);*/
+      i->collideWith(*j);
     }
   }
 }
-
+void delay (sf::Clock & clock)
+  {
+    sleep (milliseconds (1000.0 / fps) - clock.getElapsedTime ());
+    clock.restart ();
+  }
 //--------------------------------------------------------------------------------------
 int main ()
 {
+  Clock clock{};
   Item I;
-  RenderWindow window{VideoMode{width, height},"Pool"}; 
+  RenderWindow window{VideoMode{width, height},"Pool"};
   Texture t1,t2;
     if (!t1.loadFromFile ("image/background.png"))
         return 1;
     if (!t2.loadFromFile ("image/stick.png"))
         return 1;
 
-    
-  
+
+
     // skapa sprite
     Sprite bg{I.Background};
-    std::vector<Ball> Balls{
-      Ball{Vector2f{1022,413},I.getBallTextureByColor(Col::YELLOW)},
-      Ball{Vector2f{1056,393},I.getBallTextureByColor(Col::YELLOW)},
-      Ball{Vector2f{1056,433},I.getBallTextureByColor(Col::RED)},
-      Ball{Vector2f{1090,374},I.getBallTextureByColor(Col::RED)},
-      Ball{Vector2f{1090,413},I.getBallTextureByColor(Col::BLACK)},
-      Ball{Vector2f{1090,452},I.getBallTextureByColor(Col::YELLOW)},
-      Ball{Vector2f{1126,354},I.getBallTextureByColor(Col::YELLOW)},
-      Ball{Vector2f{1126,393},I.getBallTextureByColor(Col::RED)},
-      Ball{Vector2f{1126,433},I.getBallTextureByColor(Col::YELLOW)},
-      Ball{Vector2f{1126,472},I.getBallTextureByColor(Col::RED)},
-      Ball{Vector2f{1162,335},I.getBallTextureByColor(Col::RED)},
-      Ball{Vector2f{1162,374},I.getBallTextureByColor(Col::RED)},
-      Ball{Vector2f{1162,413},I.getBallTextureByColor(Col::YELLOW)},
-      Ball{Vector2f{1162,452},I.getBallTextureByColor(Col::RED)},
-      Ball{Vector2f{1162,491},I.getBallTextureByColor(Col::YELLOW)},
-      Ball{Vector2f{413,413},I.getBallTextureByColor(Col::WHITE)},
-	};
-    Ball& W_ball{ Balls.at(Balls.size() -1)};
-    Stick stick{I.Stick,W_ball};
-    
-    
+    std::vector<Ball> Balls;
+    std::transform(ConstantBalls.begin(),ConstantBalls.end(),std::back_inserter(Balls),
+		   [&I](auto const& a){
+		     return Ball{a.first,I,a.second};
+		   });
+    Ball& W_ball{ *std::find_if(Balls.begin(),Balls.end(),[](auto const& b){
+	    return b.color == Col::WHITE;
+	})};
+    //Balls.at(Balls.size() -1)};
+    Stick stick{I.Stick};
+    Wall wall;
+    Hole hole;
+
   while ( window.isOpen () )
   {
     Event event;
@@ -298,29 +417,13 @@ int main ()
       {
 	window.close ();
       }
-      else if ( event.type == Event::MouseButtonPressed )
-      {
-      }
-      else if ( event.type == Event::MouseMoved )
-      {
-	auto mouse{event.mouseMove};
-	stick.update(mouse);
-	
-	
-      }
     }
-    
-      if ( event.type == Event::MouseButtonPressed )
-      {
-	stick.increasePower();
-      }
-      else if(stick.power >0)
-      {stick.shoot();}
-      
+
     window.clear();
 
-    handleCollisions(Balls);
-    
+    handleCollisions(Balls,wall,hole);
+
+    stick.update(event,window,W_ball);
     std::for_each(Balls.begin(),Balls.end(),[](Ball & B){
 	B.update();
       });
@@ -329,11 +432,12 @@ int main ()
       stick.reposition(W_ball.position);
     }
     window.draw(bg);
-    stick.draw(window);
+
     std::for_each(Balls.begin(),Balls.end(),[&window](Ball & B){
 	B.draw(window);
       });
+    stick.draw(window);
     window.display();
+    delay(clock);
   }
 }
-
