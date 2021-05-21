@@ -1,20 +1,28 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "Item.h"
+#include "Hole.h"
+#include "Wall.h"
 
 
 class Ball
 {
-  public:
-    Ball(Texture& t);
-    void update();
-    void draw(RenderWindow& w);
-    void onShoot(float&p,float r);
-
 private:
-    Sprite ball;
-    Vector2f ball_position;
-    Vector2f velocity;
-  };
+ Sprite ball;
+public:
+ Vector2f position;
+ Vector2f velocity;
+ bool moving;
+ Col color;
+ bool visible;
+ Ball(Vector2f const& Pos, Item & I, Col c);
+ void update();
+ void draw(RenderWindow & w);
+ void onShoot(float & p, float r);
+ void handleBallInHole(Hole const& h);
+ void collideWith(Ball & B);
+ void collideWith2(Wall & w);
+};
 
 class Snooker: public Ball
 {
@@ -49,47 +57,4 @@ public:
 
 private:
   int player;
-};
-
-class Stick
-{
-public:
-  float power;
-  Stick(Texture& t,Ball & b);
-
-  void update(Event::MouseMoveEvent & v);
-  void draw(RenderWindow& w);
-  void updateRotation(Event::MouseMoveEvent & v);
-  void increasePower();
-  void shoot();
-
-private:
-  Sprite stick;
-  Vecror2f ball_position;
-  float rotation;
-  Ball& Wball;
-};
-
-class Hole
-{
-public:
-  Hole();
-  bool is_in(Ball& b);
-  void if_in(bool x, int p);
-
-private:
-  Vector2i ball_position;
-  int points;
-};
-
-class Wall
-{
-public:
-  Wall(Texture & t);
-  bool is_hit();
-  void if_hit(bool x);
-
-private:
-  double length;
-  Vector2i position;
 };
