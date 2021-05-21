@@ -6,7 +6,7 @@
 class Menu
 {
 public:
-  Menu(float width, float hight);
+  Menu(float width, float hight, sf::Texture &t, sf::Texture &t1);
   ~Menu();
 
   void draw(sf::RenderWindow &window);
@@ -14,6 +14,8 @@ public:
   void MoveDown();
 
 private:
+  sf::Sprite bg;
+  sf::Sprite bg1;
   int selectedItemIndex;
   sf::Font font;
   sf::Text menu[MAX_NUMBER_OF_ITEMS];
