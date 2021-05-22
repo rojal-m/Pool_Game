@@ -9,7 +9,8 @@ Item::Item()
    W_B{loadTexture("ball.png")},
    B_B{loadTexture("black_ball.png")},
    B1{loadTexture("red_ball.png")},
-   B2{loadTexture("yellow_ball.png")} {}
+   B2{loadTexture("yellow_ball.png")},
+   GameOver{loadTexture("Game_Over.png")} {}
 
 Texture Item::loadTexture(std::string const& s)
 {
@@ -18,7 +19,7 @@ Texture Item::loadTexture(std::string const& s)
     throw std::invalid_argument{"File not found"};
   return T;
 }
-  
+
 Texture const& Item::getBallTextureByColor(Col C) const
 {
   switch(C)

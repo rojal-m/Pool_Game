@@ -16,7 +16,8 @@ private:
   Wall wall;
   Hole hole;
   bool end_game{false};
-  
+  sf::Sprite GameOver;
+
   bool ballsMoving(std::vector<Ball> &);
   void handleCollisions(std::vector<Ball> &, Wall &, Hole &);
   void cleanup ();

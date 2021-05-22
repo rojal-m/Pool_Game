@@ -57,10 +57,13 @@ void Ball::handleBallInHole(Hole const& h)
   std::for_each(h.position.begin(),h.position.end(),[&inHole,&h,&pos,this](auto const& p){
       inHole += distFrom(pos,p) <= h.radius;
   });
+
   if(!inHole)
     return;
+
   visible = false;
   moving = false;
+
 }
 
 void Ball::collideWith(Ball & B)
@@ -74,7 +77,7 @@ void Ball::collideWith(Ball & B)
   const auto dist{length(n)};
   if(dist > BALL_DIAMETER)
     return;
-  
+
   const auto mtd{n*((BALL_DIAMETER-dist)/dist)};
   position = position + mtd*(0.5f);
   B.position = B.position - mtd*(0.5f);

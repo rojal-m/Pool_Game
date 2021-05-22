@@ -28,10 +28,10 @@ Game_State :: Game_State (Item const & I)
        })},
    stick{I.Stick, W_ball},
    wall{},
-   hole{}
-{
-  
-}
+   hole{},
+   GameOver{I.GameOver}
+{GameOver.setPosition(-1000,-1000);}
+
 void Game_State :: handle_event (Event & event)
 {
   /*if ( event.type == Event::MouseButtonReleased )
@@ -65,12 +65,16 @@ void Game_State :: handle_event (Event & event)
 void Game_State :: update ()
 {
   stick.update();
-  handleCollisions(Balls,wall,hole);  
+  handleCollisions(Balls,wall,hole);
   std::for_each(Balls.begin(),Balls.end(),[](Ball & B){
       B.update();
     });
+
   if (!ballsMoving(Balls) && stick.shot)
     stick.reposition(W_ball.position);
+
+  if (!W_ball.visible)
+    GameOver.setPosition(100,0);
 }
 
 void Game_State :: render (RenderWindow & window)
@@ -81,6 +85,7 @@ void Game_State :: render (RenderWindow & window)
       B.draw(window);
     });
   stick.draw(window);
+  window.draw(GameOver);
 }
 
 int Game_State :: get_next_state()
