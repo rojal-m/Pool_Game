@@ -16,7 +16,7 @@ float const delta = 100;
 float const BALL_DIAMETER = 36;
 float const MAX_POWER = 3000;
 float const FRICTION {0.985};
-double const fps { 120.0 };
+double const fps { 60.0 };
 
 template<typename T>
 float dot(Vector2<T> const& Left, Vector2<T> const& Right)
@@ -36,12 +36,12 @@ float distFrom(Vector2<T> const& Left, Vector2<T> const& Right)
 }
 
 enum Col
-    {
-      RED = 1,
-      YELLOW = 2,
-      BLACK = 3,
-      WHITE = 4
-    };
+{
+  RED = 1,
+  YELLOW = 2,
+  BLACK = 3,
+  WHITE = 4
+};
 
 std::vector<std::pair<Vector2f,Col>> const ConstantBalls
 {
@@ -90,7 +90,7 @@ public:
   {
     SoundBuffer S;
     if(!S.loadFromFile ("Music/"+a))
-    throw std::invalid_argument{"File not found"};
+      throw std::invalid_argument{"File not found"};
     return S;
   }
 
@@ -205,18 +205,18 @@ public:
   void handleBallInHole(Hole const& h)
   {
     if(!visible)
-    return;
+      return;
     bool inHole{};
     Vector2f pos{position};
     std::for_each(h.position.begin(),h.position.end(),[&inHole,&h,&pos](auto const& p)
-    {
-	inHole += distFrom(pos,p) <= h.radius;
-    });
+		  {
+		    inHole += distFrom(pos,p) <= h.radius;
+		  });
 
     if(!inHole)
-	{
-    return;
-  }
+    {
+      return;
+    }
     visible = false;
     moving = false;
 
@@ -233,7 +233,10 @@ public:
     //find distance
     const auto dist{length(n)};
     if(dist > BALL_DIAMETER)
-    return;
+      return;
+
+    collide.play();
+    
 
     const auto mtd{n*((BALL_DIAMETER-dist)/dist)};
     position = position + mtd*(0.5f);
@@ -261,7 +264,7 @@ public:
     moving = true;
     B.moving = true;
 
-    collide.play();
+    
 
   }
 
@@ -298,8 +301,8 @@ public:
 
     if(collided)
 
-        side.play();
-      velocity *= FRICTION;
+      side.play();
+    velocity *= FRICTION;
 
 
   }
@@ -408,17 +411,17 @@ void handleCollisions(std::vector<Ball> & b, Wall & W, Hole & h)
     i->collideWith(W);
     for(auto j{i+1};j != b.end(); ++j){
       /*auto & firstBall = *i;
-      auto & secondBall = *j;
-      firstBall.collideWith(secondBall);*/
+	auto & secondBall = *j;
+	firstBall.collideWith(secondBall);*/
       i->collideWith(*j);
     }
   }
 }
 void delay (sf::Clock & clock)
-  {
-    sleep (milliseconds (1000.0 / fps) - clock.getElapsedTime ());
-    clock.restart ();
-  }
+{
+  sleep (milliseconds (1000.0 / fps) - clock.getElapsedTime ());
+  clock.restart ();
+}
 //--------------------------------------------------------------------------------------
 int main ()
 {
@@ -426,25 +429,25 @@ int main ()
   Item I;
   RenderWindow window{VideoMode{width, height},"Pool"};
   Texture t1,t2;
-    if (!t1.loadFromFile ("image/background.png"))
-        return 1;
-    if (!t2.loadFromFile ("image/stick.png"))
-        return 1;
+  if (!t1.loadFromFile ("image/background.png"))
+    return 1;
+  if (!t2.loadFromFile ("image/stick.png"))
+    return 1;
 
-    // skapa sprite
-    Sprite bg{I.Background};
-    std::vector<Ball> Balls;
-    std::transform(ConstantBalls.begin(),ConstantBalls.end(),std::back_inserter(Balls),
-		   [&I](auto const& a){
-		     return Ball{a.first,I,a.second};
-		   });
-    Ball& W_ball{ *std::find_if(Balls.begin(),Balls.end(),[](auto const& b){
-	    return b.color == Col::WHITE;
-	})};
-    //Balls.at(Balls.size() -1)};
-    Stick stick{I.Stick};
-    Wall wall;
-    Hole hole;
+  // skapa sprite
+  Sprite bg{I.Background};
+  std::vector<Ball> Balls;
+  std::transform(ConstantBalls.begin(),ConstantBalls.end(),std::back_inserter(Balls),
+		 [&I](auto const& a){
+		   return Ball{a.first,I,a.second};
+		 });
+  Ball& W_ball{ *std::find_if(Balls.begin(),Balls.end(),[](auto const& b){
+	return b.color == Col::WHITE;
+      })};
+  //Balls.at(Balls.size() -1)};
+  Stick stick{I.Stick};
+  Wall wall;
+  Hole hole;
 
   while ( window.isOpen () )
   {
