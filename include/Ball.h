@@ -11,6 +11,7 @@ class Ball
 {
 private:
   sf::Sprite ball;
+
 public:
   sf::Vector2f position;
   sf::Vector2f velocity;
@@ -45,4 +46,3 @@ private:
   }
 
 };
-

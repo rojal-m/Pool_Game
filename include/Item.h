@@ -14,6 +14,7 @@ public:
   sf::Texture B_B;
   sf::Texture B1;
   sf::Texture B2;
+  sf::Texture GameOver;
 
   Item();
   sf::Texture loadTexture(std::string const& s);
