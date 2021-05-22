@@ -1,0 +1,9 @@
+#include <iostream>
+#include <string>
+#include <stdexcept>
+#include <math.h>
+#include "Stick.h"
+
+using namespace sf;
+using namespace std;
+

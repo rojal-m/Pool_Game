@@ -1,3 +1,6 @@
+#ifndef ITEM_H
+#define ITEM_H
+
 #include <SFML/Graphics.hpp>
 #include <string>
 #include "constants.h"
@@ -16,3 +19,5 @@ public:
   sf::Texture loadTexture(std::string const& s);
   sf::Texture const& getBallTextureByColor(Col C) const;
 };
+
+#endif

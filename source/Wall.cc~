@@ -1,16 +1,12 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
-#include <cmath>
-#include <iterator>
-#include <algorithm>
-#include <utility>
 #include "Ball.h"
+#include <math.h>
 
 using namespace sf;
-using namespace std;
 
-Ball::Ball(Vector2f const& Pos, Item const & I, Col c)
+Ball::Ball(Vector2f const& Pos, Item & I, Col c)
   :ball{I.getBallTextureByColor(c)}, position{Pos}, velocity{0,0}, moving{false}, color{c}, visible{true}
 {
   auto a = ball.getGlobalBounds();
@@ -51,19 +47,21 @@ void Ball::onShoot(float&p,float r)
 void Ball::handleBallInHole(Hole const& h)
 {
   if(!visible)
-    return;
+  return;
   bool inHole{};
   Vector2f pos{position};
-  std::for_each(h.position.begin(),h.position.end(),[&inHole,&h,&pos,this](auto const& p){
-      inHole += distFrom(pos,p) <= h.radius;
+  std::for_each(h.position.begin(),h.position.end(),[&inHole,&h,&pos](auto const& p){
+  inHole += distFrom(pos,p) <= h.radius;
   });
   if(!inHole)
-    return;
+{
+  return;
+}
   visible = false;
   moving = false;
 }
 
-void Ball::collideWith(Ball & B)
+void Ball::collideWith(Ball & b)
 {
   if(!visible || !B.visible)
     return;
@@ -102,7 +100,7 @@ void Ball::collideWith(Ball & B)
   B.moving = true;
 }
 
-void Ball::collideWith(Wall & w)
+void Ball::collideWith2(Wall & w)
 {
   if(!visible || !moving)
     return;

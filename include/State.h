@@ -3,8 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 
-int const Manu_State{0};
-int const Game_State{1};
+int const MENU_STATE{0};
+int const GAME_STATE{1};
 
 class State
 {

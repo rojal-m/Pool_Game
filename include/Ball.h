@@ -1,60 +1,48 @@
 #pragma once
+
 #include <SFML/Graphics.hpp>
+#include <math.h>
+#include "constants.h"
 #include "Item.h"
 #include "Hole.h"
 #include "Wall.h"
 
-
 class Ball
 {
 private:
- Sprite ball;
+  sf::Sprite ball;
 public:
- Vector2f position;
- Vector2f velocity;
- bool moving;
- Col color;
- bool visible;
- Ball(Vector2f const& Pos, Item & I, Col c);
- void update();
- void draw(RenderWindow & w);
- void onShoot(float & p, float r);
- void handleBallInHole(Hole const& h);
- void collideWith(Ball & B);
- void collideWith2(Wall & w);
-};
+  sf::Vector2f position;
+  sf::Vector2f velocity;
+  bool moving;
+  Col color;
+  bool visible;
 
-class Snooker: public Ball
-{
-public:
-  Snooker();
-  bool correct_hit();
-  void if_wrong_hit(bool);
-};
-
-class Eight_Ball: public Ball
-{
-public:
-  Eight_Ball();
-
+  Ball(sf::Vector2f const&, Item const&, Col );
+  void update();
+  void draw(sf::RenderWindow &);
+  void onShoot(float &, float);
+  void handleBallInHole(Hole const&);
+  void collideWith(Ball &);
+  void collideWith(Wall &);
 private:
-  bool last_ball();
+  template<typename T>
+  float dot(sf::Vector2<T> const& Left, sf::Vector2<T> const& Right)
+  {
+    return Left.x * Right.x + Left.y * Right.y;
+  }
+
+  template<typename T>
+  float length(sf::Vector2<T> const& v)
+  {
+    return sqrt(powf(v.x,2)+powf(v.y,2));
+  }
+
+  template<typename T>
+  float distFrom(sf::Vector2<T> const& Left, sf::Vector2<T> const& Right)
+  {
+    return length(Left - Right);
+  }
+
 };
 
-class plain_ball: public Ball
-{
-public:
-  plain_ball();
-
-private:
-  int player;
-};
-
-class spot_ball: public Ball
-{
-public:
-  spot_ball();
-
-private:
-  int player;
-};

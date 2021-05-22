@@ -1,22 +1,29 @@
-#include "State.h"
-#include "Game.h"
-
 #include<vector>
+#include "State.h"
+#include "Item.h"
+#include "Ball.h"
+#include "Stick.h"
+#include "Wall.h"
+#include "Hole.h"
 
-class Game_State: public State{
-//Allt som finns i state ska vara public här(polymorphism)
-
-public:
-  void Handle_Event (sf::Event);
-  void update ();
-  void render();
-  void Get_Next_State();
-
+class Game_State : public State
+{
 private:
-  bool game_end{false};
-  void clean_After_Game();
-
-  std::vector<Balls> All_Balls_Now{};
+  sf::Sprite bg;
+  std::vector<Ball> Balls;
+  Ball & W_ball;
+  Stick stick;
+  Wall wall;
+  Hole hole;
+  bool end_game{false};
+  
+  bool ballsMoving(std::vector<Ball> &);
+  void handleCollisions(std::vector<Ball> &, Wall &, Hole &);
+  void cleanup ();
+public:
+  Game_State (Item const &);
+  void handle_event (sf::Event &) override;
+  void update () override;
+  void render (sf::RenderWindow &) override;
+  virtual int get_next_state() override;
 };
-
-#endif

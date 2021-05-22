@@ -14,7 +14,7 @@ Item::Item()
 Texture Item::loadTexture(std::string const& s)
 {
   Texture T;
-  if(!T.loadFromFile ("image/"+s))
+  if(!T.loadFromFile ("item/image/"+s))
     throw std::invalid_argument{"File not found"};
   return T;
 }
