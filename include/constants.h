@@ -7,7 +7,7 @@ float const delta { 1000 };
 float const BALL_DIAMETER { 36 };
 float const MAX_POWER { 5000 };
 float const FRICTION { 0.9962330 };
-double const fps { 60.0 };
+double const fps { 120.0 };
 
 enum Col
 {
