@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp> // includes most things in SFML
+#include <SFML/Audio.hpp>
 #include <iostream>
 #include <math.h>
 #include <cmath>
@@ -71,6 +72,11 @@ public:
   Texture B1;
   Texture B2;
 
+  sf::SoundBuffer collideBuffer;
+  sf::SoundBuffer holeBuffer;
+  sf::SoundBuffer strikeBuffer;
+  sf::SoundBuffer sideBuffer;
+
   Texture loadTexture(std::string const& s)
   {
     Texture T;
@@ -80,13 +86,25 @@ public:
     return T;
   }
 
+  SoundBuffer loadSoundBuffer(std::string const& a)
+  {
+    SoundBuffer S;
+    if(!S.loadFromFile ("Music/"+a))
+    throw std::invalid_argument{"File not found"};
+    return S;
+  }
+
   Item()
     :Background{loadTexture("background.png")},
      Stick{loadTexture("stick.png")},
      W_B{loadTexture("ball.png")},
      B_B{loadTexture("black_ball.png")},
      B1{loadTexture("red_ball.png")},
-     B2{loadTexture("yellow_ball.png")} {}
+     B2{loadTexture("yellow_ball.png")},
+     collideBuffer{loadSoundBuffer ("Collide.wav")},
+     holeBuffer{loadSoundBuffer("Hole.wav")},
+     strikeBuffer{loadSoundBuffer("Strike.wav")},
+     sideBuffer{loadSoundBuffer("Side.wav")} {}
 
   Texture const& getBallTextureByColor(Col C)
   {
@@ -133,14 +151,20 @@ class Ball
 {
 private:
   Sprite ball;
+  Sound collide;
+  Sound hole;
+  Sound strike;
+  Sound side;
+
 public:
   Vector2f position;
   Vector2f velocity;
   bool moving;
   Col color;
   bool visible;
+
   Ball(Vector2f const& Pos, Item & I, Col c)
-    :ball{I.getBallTextureByColor(c)}, position{Pos}, velocity{0,0}, moving{false}, color{c}, visible{true}
+    :ball{I.getBallTextureByColor(c)}, collide{I.collideBuffer}, hole{I.holeBuffer}, strike{I.strikeBuffer}, side{I.sideBuffer}, position{Pos}, velocity{0,0}, moving{false}, color{c}, visible{true}
   {
     auto a = ball.getGlobalBounds();
     ball.setOrigin(a.width/2,a.height/2);
@@ -181,18 +205,23 @@ public:
   void handleBallInHole(Hole const& h)
   {
     if(!visible)
-      return;
+    return;
     bool inHole{};
     Vector2f pos{position};
-    std::for_each(h.position.begin(),h.position.end(),[&inHole,&h,&pos](auto const& p){
+    std::for_each(h.position.begin(),h.position.end(),[&inHole,&h,&pos](auto const& p)
+    {
 	inHole += distFrom(pos,p) <= h.radius;
+    });
 
-
-      });
     if(!inHole)
-	{return;}
+	{
+    return;
+  }
     visible = false;
     moving = false;
+
+    hole.play();
+
   }
   void collideWith(Ball & B)
   {
@@ -204,7 +233,8 @@ public:
     //find distance
     const auto dist{length(n)};
     if(dist > BALL_DIAMETER)
-      return;
+    return;
+
     const auto mtd{n*((BALL_DIAMETER-dist)/dist)};
     position = position + mtd*(0.5f);
     B.position = B.position - mtd*(0.5f);
@@ -230,7 +260,12 @@ public:
 
     moving = true;
     B.moving = true;
+
+    collide.play();
+
   }
+
+
   void collideWith(Wall & w)
   {
     if(!visible || !moving)
@@ -262,9 +297,14 @@ public:
     }
 
     if(collided)
+
+        side.play();
       velocity *= FRICTION;
 
+
   }
+
+
 };
 //---------------------------------------------------------------------------------------
 class Stick
@@ -390,8 +430,6 @@ int main ()
         return 1;
     if (!t2.loadFromFile ("image/stick.png"))
         return 1;
-
-
 
     // skapa sprite
     Sprite bg{I.Background};
