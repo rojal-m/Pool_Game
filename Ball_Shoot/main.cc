@@ -61,91 +61,9 @@ std::vector<std::pair<Vector2f,Col>> const ConstantBalls
   {Vector2f{1162,413},Col::YELLOW},
   {Vector2f{1162,452},Col::RED},
   {Vector2f{1162,491},Col::YELLOW},
-    };
-class Item
-{
-public:
-  Texture Background;
-  Texture Stick;
-  Texture W_B;
-  Texture B_B;
-  Texture B1;
-  Texture B2;
 
-  sf::SoundBuffer collideBuffer;
-  sf::SoundBuffer holeBuffer;
-  sf::SoundBuffer strikeBuffer;
-  sf::SoundBuffer sideBuffer;
+  };
 
-  Texture loadTexture(std::string const& s)
-  {
-    Texture T;
-    if(!T.loadFromFile ("image/"+s))
-      throw std::invalid_argument{"File not found"};
-    //Texture::bind(&T);
-    return T;
-  }
-
-  SoundBuffer loadSoundBuffer(std::string const& a)
-  {
-    SoundBuffer S;
-    if(!S.loadFromFile ("Music/"+a))
-    throw std::invalid_argument{"File not found"};
-    return S;
-  }
-
-  Item()
-    :Background{loadTexture("background.png")},
-     Stick{loadTexture("stick.png")},
-     W_B{loadTexture("ball.png")},
-     B_B{loadTexture("black_ball.png")},
-     B1{loadTexture("red_ball.png")},
-     B2{loadTexture("yellow_ball.png")},
-     collideBuffer{loadSoundBuffer ("Collide.wav")},
-     holeBuffer{loadSoundBuffer("Hole.wav")},
-     strikeBuffer{loadSoundBuffer("Strike.wav")},
-     sideBuffer{loadSoundBuffer("Side.wav")} {}
-
-  Texture const& getBallTextureByColor(Col C)
-  {
-    switch(C)
-    {
-    case Col::RED:
-      return B1;
-    case Col::YELLOW:
-      return B2;
-    case Col::BLACK:
-      return B_B;
-    case Col::WHITE:
-      return W_B;
-    }
-    throw std::invalid_argument{"Wrong Ball Color"};
-  }
-};
-
-class Wall
-{
-public:
-  float topY;
-  float rightX;
-  float bottomY;
-  float leftX;
-  Wall()
-    : topY{57},rightX{1443},bottomY{768},leftX{57}
-  {}
-};
-class Hole
-{
-public:
-  float radius{46};
-  std::vector<Vector2f> position{
-    Vector2f{750,32},
-      Vector2f{750,794},
-	Vector2f{62,62},
-	  Vector2f{1435,62},
-	    Vector2f{62,762},
-	      Vector2f{1435,762}};
-};
 //-------------------------------------------------------------------------------------
 class Ball
 {
@@ -153,7 +71,6 @@ private:
   Sprite ball;
   Sound collide;
   Sound hole;
-  Sound strike;
   Sound side;
 
 public:
@@ -163,8 +80,9 @@ public:
   Col color;
   bool visible;
 
+
   Ball(Vector2f const& Pos, Item & I, Col c)
-    :ball{I.getBallTextureByColor(c)}, collide{I.collideBuffer}, hole{I.holeBuffer}, strike{I.strikeBuffer}, side{I.sideBuffer}, position{Pos}, velocity{0,0}, moving{false}, color{c}, visible{true}
+    :ball{I.getBallTextureByColor(c)}, collide{I.collideBuffer}, hole{I.holeBuffer}, side{I.sideBuffer}, position{Pos}, velocity{0,0}, moving{false}, color{c}, visible{true}
   {
     auto a = ball.getGlobalBounds();
     ball.setOrigin(a.width/2,a.height/2);
@@ -226,14 +144,25 @@ public:
   void collideWith(Ball & B)
   {
     if(!visible || !B.visible)
-      return;
+      {
+        return;
+      }
+
+
     //find normal vector
     const auto n{position - B.position};
+
 
     //find distance
     const auto dist{length(n)};
     if(dist > BALL_DIAMETER)
-    return;
+
+    {
+      return;
+
+   }
+
+
 
     const auto mtd{n*((BALL_DIAMETER-dist)/dist)};
     position = position + mtd*(0.5f);
@@ -250,10 +179,13 @@ public:
     const auto v2t{dot(ut,B.velocity)};
 
 
+
     const auto v1nTag{un*v2n};
     const auto v1tTag{ut*v1t};
     const auto v2nTag{un*v1n};
     const auto v2tTag{ut*v2t};
+
+
 
     velocity = v1nTag + v1tTag;
     B.velocity = v2nTag + v2tTag;
@@ -261,10 +193,10 @@ public:
     moving = true;
     B.moving = true;
 
+
+    collide.setPlayingOffset(seconds(1.f));
     collide.play();
-
   }
-
 
   void collideWith(Wall & w)
   {
@@ -297,11 +229,10 @@ public:
     }
 
     if(collided)
-
-        side.play();
+    {
+      side.play();
       velocity *= FRICTION;
-
-
+    }
   }
 
 
@@ -313,13 +244,13 @@ private:
   Sprite stick;
   Vector2f position;
   float rotation;
-
+  Sound strike;
 
 public:
   bool shot;
   float power;
-  Stick(Texture& t)
-    :stick{t}, position{}, rotation {0}, shot{false}, power{0}
+  Stick(Texture & t, Item & I)
+    :stick{t}, position{}, rotation {0}, strike{I.strikeBuffer}, shot{false}, power{0}
   {
     stick.setOrigin(970,11);
     position = Vector2f{413.0,413.0};
@@ -376,7 +307,11 @@ public:
     power = 0;
     stick.setOrigin(950,11);
     shot = true;
+
+    strike.setVolume(100.f);
+    strike.play();
   }
+
   void reposition(Vector2f const& pos)
   {
     position = pos;
@@ -442,9 +377,10 @@ int main ()
 	    return b.color == Col::WHITE;
 	})};
     //Balls.at(Balls.size() -1)};
-    Stick stick{I.Stick};
+    Stick stick{I.Stick, I};
     Wall wall;
     Hole hole;
+
 
   while ( window.isOpen () )
   {
