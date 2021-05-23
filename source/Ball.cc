@@ -21,8 +21,10 @@ void Ball::update()
 {
   if(!visible)
     return;
-
+  //std::cout<<velocity.x<<" "<<velocity.y<<"\n";
   position += velocity/delta;
+
+  //std::cout<<velocity.x<<" "<<(velocity.x /delta)<<" "<<velocity.y<<"\n";
   velocity =  velocity*FRICTION;
 
   if(length(velocity) < 10)
@@ -36,7 +38,7 @@ void Ball::update()
 void Ball::draw(RenderWindow& w)
 {
   if(!visible)
-  return;
+    return;
   ball.setPosition(position);
   w.draw(ball);
 }
@@ -54,17 +56,22 @@ void Ball::handleBallInHole(Hole const& h)
     return;
   bool inHole{};
   Vector2f pos{position};
-  std::for_each(h.position.begin(),h.position.end(),[&inHole,&h,&pos,this](auto const& p){
+  std::for_each(h.position.begin(),h.position.end(),[&inHole,&h,&pos](auto const& p)
+    {
       inHole += distFrom(pos,p) <= h.radius;
-  });
+    });
 
   if(!inHole)
+  {
     return;
-
+  }
   visible = false;
   moving = false;
 
+  hole.play();
+
 }
+
 
 void Ball::collideWith(Ball & B)
 {
@@ -77,6 +84,9 @@ void Ball::collideWith(Ball & B)
   const auto dist{length(n)};
   if(dist > BALL_DIAMETER)
     return;
+
+  collide.play();
+
 
   const auto mtd{n*((BALL_DIAMETER-dist)/dist)};
   position = position + mtd*(0.5f);
@@ -103,13 +113,13 @@ void Ball::collideWith(Ball & B)
 
   moving = true;
   B.moving = true;
+
 }
 
 void Ball::collideWith(Wall & w)
 {
   if(!visible || !moving)
     return;
-
   bool collided = false;
   if(position.y <= w.topY+(BALL_DIAMETER/2))
   {
@@ -137,5 +147,9 @@ void Ball::collideWith(Wall & w)
   }
 
   if(collided)
-    velocity *= FRICTION;
+
+    side.play();
+  velocity *= FRICTION;
+
+
 }
