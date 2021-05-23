@@ -10,7 +10,12 @@ Item::Item()
    B_B{loadTexture("black_ball.png")},
    B1{loadTexture("red_ball.png")},
    B2{loadTexture("yellow_ball.png")},
-   GameOver{loadTexture("Game_Over.png")} {}
+   GameOver{loadTexture("Game_Over.png")},
+   collideBuffer{loadSoundBuffer ("Collide.wav")},
+   holeBuffer{loadSoundBuffer("Hole.wav")},
+   strikeBuffer{loadSoundBuffer("Strike.wav")},
+   sideBuffer{loadSoundBuffer("Side.wav")} {}
+
 
 Texture Item::loadTexture(std::string const& s)
 {
@@ -20,7 +25,15 @@ Texture Item::loadTexture(std::string const& s)
   return T;
 }
 
-Texture const& Item::getBallTextureByColor(Col C) const
+SoundBuffer Item::loadSoundBuffer(std::string const& a)
+{
+  SoundBuffer S;
+  if(!S.loadFromFile ("item/Music/"+a))
+  throw std::invalid_argument{"File not found"};
+  return S;
+}
+
+Texture const& Item::getBallTextureByColor(Col C)
 {
   switch(C)
   {
