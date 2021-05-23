@@ -18,6 +18,7 @@ public:
   Texture B1;
   Texture B2;
   Texture GameOver;
+  Texture ball_8; 
 
   SoundBuffer collideBuffer;
   SoundBuffer holeBuffer;

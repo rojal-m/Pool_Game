@@ -11,6 +11,7 @@ Item::Item()
    B1{loadTexture("red_ball.png")},
    B2{loadTexture("yellow_ball.png")},
    GameOver{loadTexture("Game_Over.png")},
+   ball_8{loadTexture("8ball.png")},
    collideBuffer{loadSoundBuffer ("Collide.wav")},
    holeBuffer{loadSoundBuffer("Hole.wav")},
    strikeBuffer{loadSoundBuffer("Strike.wav")},
