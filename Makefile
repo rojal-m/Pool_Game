@@ -15,7 +15,7 @@ OBJDIR := objdir
 CCC = g++
 
 # Compiling flags
-CCFLAGS +=  -Wno-deprecated-declarations -Wall -Wextra -pedantic -std=c++17 -Weffc++ -I$(SFML_ROOT)/include
+CCFLAGS += -std=c++17 -Wno-deprecated-declarations -Wall -Wextra -Wpedantic -pedantic -Werror -Weffc++ -Wold-style-cast -Woverloaded-virtual -fmax-errors=5 -g -I$(SFML_ROOT)/include
 
 LDFLAGS += -L$(SFML_ROOT)/lib -lsfml-graphics -lsfml-audio -lsfml-window -lsfml-system
 

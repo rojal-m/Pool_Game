@@ -16,7 +16,7 @@ float const delta = 100;
 float const BALL_DIAMETER = 36;
 float const MAX_POWER = 3000;
 float const FRICTION {0.985};
-double const fps { 120.0 };
+double const fps { 60.0 };
 
 template<typename T>
 float dot(Vector2<T> const& Left, Vector2<T> const& Right)
@@ -36,12 +36,12 @@ float distFrom(Vector2<T> const& Left, Vector2<T> const& Right)
 }
 
 enum Col
-    {
-      RED = 1,
-      YELLOW = 2,
-      BLACK = 3,
-      WHITE = 4
-    };
+{
+  RED = 1,
+  YELLOW = 2,
+  BLACK = 3,
+  WHITE = 4
+};
 
 std::vector<std::pair<Vector2f,Col>> const ConstantBalls
 {
@@ -62,9 +62,49 @@ std::vector<std::pair<Vector2f,Col>> const ConstantBalls
   {Vector2f{1162,452},Col::RED},
   {Vector2f{1162,491},Col::YELLOW},
 
+<<<<<<< HEAD
   };
+=======
+  SoundBuffer loadSoundBuffer(std::string const& a)
+  {
+    SoundBuffer S;
+    if(!S.loadFromFile ("Music/"+a))
+      throw std::invalid_argument{"File not found"};
+    return S;
+  }
+
+  Item()
+    :Background{loadTexture("background.png")},
+     Stick{loadTexture("stick.png")},
+     W_B{loadTexture("ball.png")},
+     B_B{loadTexture("black_ball.png")},
+     B1{loadTexture("red_ball.png")},
+     B2{loadTexture("yellow_ball.png")},
+     collideBuffer{loadSoundBuffer ("Collide.wav")},
+     holeBuffer{loadSoundBuffer("Hole.wav")},
+     strikeBuffer{loadSoundBuffer("Strike.wav")},
+     sideBuffer{loadSoundBuffer("Side.wav")} {}
+
+  Texture const& getBallTextureByColor(Col C)
+  {
+    switch(C)
+    {
+    case Col::RED:
+      return B1;
+    case Col::YELLOW:
+      return B2;
+    case Col::BLACK:
+      return B_B;
+    case Col::WHITE:
+      return W_B;
+    }
+    throw std::invalid_argument{"Wrong Ball Color"};
+  }
+};
+>>>>>>> 0c2b3a552c048a3cb86f7f5d856d5eca2da78b61
 
 //-------------------------------------------------------------------------------------
+<<<<<<< HEAD
 class Ball
 {
 private:
@@ -238,6 +278,9 @@ public:
 
 };
 //---------------------------------------------------------------------------------------
+=======
+
+>>>>>>> 0c2b3a552c048a3cb86f7f5d856d5eca2da78b61
 class Stick
 {
 private:
@@ -343,17 +386,17 @@ void handleCollisions(std::vector<Ball> & b, Wall & W, Hole & h)
     i->collideWith(W);
     for(auto j{i+1};j != b.end(); ++j){
       /*auto & firstBall = *i;
-      auto & secondBall = *j;
-      firstBall.collideWith(secondBall);*/
+	auto & secondBall = *j;
+	firstBall.collideWith(secondBall);*/
       i->collideWith(*j);
     }
   }
 }
 void delay (sf::Clock & clock)
-  {
-    sleep (milliseconds (1000.0 / fps) - clock.getElapsedTime ());
-    clock.restart ();
-  }
+{
+  sleep (milliseconds (1000.0 / fps) - clock.getElapsedTime ());
+  clock.restart ();
+}
 //--------------------------------------------------------------------------------------
 int main ()
 {
@@ -361,6 +404,7 @@ int main ()
   Item I;
   RenderWindow window{VideoMode{width, height},"Pool"};
   Texture t1,t2;
+<<<<<<< HEAD
     if (!t1.loadFromFile ("image/background.png"))
         return 1;
     if (!t2.loadFromFile ("image/stick.png"))
@@ -380,6 +424,27 @@ int main ()
     Stick stick{I.Stick, I};
     Wall wall;
     Hole hole;
+=======
+  if (!t1.loadFromFile ("image/background.png"))
+    return 1;
+  if (!t2.loadFromFile ("image/stick.png"))
+    return 1;
+
+  // skapa sprite
+  Sprite bg{I.Background};
+  std::vector<Ball> Balls;
+  std::transform(ConstantBalls.begin(),ConstantBalls.end(),std::back_inserter(Balls),
+		 [&I](auto const& a){
+		   return Ball{a.first,I,a.second};
+		 });
+  Ball& W_ball{ *std::find_if(Balls.begin(),Balls.end(),[](auto const& b){
+	return b.color == Col::WHITE;
+      })};
+  //Balls.at(Balls.size() -1)};
+  Stick stick{I.Stick};
+  Wall wall;
+  Hole hole;
+>>>>>>> 0c2b3a552c048a3cb86f7f5d856d5eca2da78b61
 
 
   while ( window.isOpen () )
