@@ -11,6 +11,9 @@ class Ball
 {
 private:
   sf::Sprite ball;
+  sf::Sound collide;
+  sf::Sound hole;
+  sf::Sound side;
 
 public:
   sf::Vector2f position;

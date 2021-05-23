@@ -27,7 +27,7 @@ public:
   Item();
   Texture loadTexture(std::string const& s);
   SoundBuffer loadSoundBuffer (std::string const& a);
-  Texture const& getBallTextureByColor(Col C);
+  Texture const& getBallTextureByColor(Col C) const;
 };
 
 #endif

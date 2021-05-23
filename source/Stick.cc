@@ -7,8 +7,8 @@
 using namespace sf;
 using namespace std;
 
-Stick::Stick(Texture const& t,Ball & w)
-  :stick{t}, position{}, rotation {0}, Wball{w}, shot{false}, power{0}
+Stick::Stick(Item const& I ,Ball & w)
+  :stick{I.Stick}, position{}, rotation {0}, Wball{w}, strike{I.strikeBuffer}, shot{false}, power{0}
 {
   stick.setOrigin(970,11);
   position = Vector2f{413.0,413.0};
@@ -20,7 +20,7 @@ void Stick::update()
   {
     position = Vector2f{-1000,-1000};
     return;
-  }  
+  }
 }
 
 void Stick::draw(RenderWindow& w)
@@ -53,7 +53,7 @@ void Stick::increasePower()
   if(power > MAX_POWER)
     return;
   power += 120;
-  Vector2f v = stick.getOrigin(); 
+  Vector2f v = stick.getOrigin();
   stick.setOrigin(v.x+5,v.y);
 }
 
@@ -64,7 +64,7 @@ void Stick::decreasePower()
     return;
   }
   power -= 120;
-  Vector2f v = stick.getOrigin(); 
+  Vector2f v = stick.getOrigin();
   stick.setOrigin(v.x-5,v.y);
 }
 
@@ -74,7 +74,9 @@ void Stick::shoot()
   power = 0;
   stick.setOrigin(950,11);
   shot = true;
+  strike.play();
 }
+
 void Stick::reposition(Vector2f const& pos)
 {
   position = pos;

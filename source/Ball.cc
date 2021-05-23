@@ -11,7 +11,7 @@ using namespace sf;
 using namespace std;
 
 Ball::Ball(Vector2f const& Pos, Item const & I, Col c)
-  :ball{I.getBallTextureByColor(c)}, position{Pos}, velocity{0,0}, moving{false}, color{c}, visible{true}
+  :ball{I.getBallTextureByColor(c)}, collide{I.collideBuffer}, hole{I.holeBuffer}, side{I.sideBuffer}, position{Pos},  velocity{0,0}, moving{false}, color{c}, visible{true}
 {
   auto a = ball.getGlobalBounds();
   ball.setOrigin(a.width/2,a.height/2);
@@ -56,7 +56,7 @@ void Ball::handleBallInHole(Hole const& h)
     return;
   bool inHole{};
   Vector2f pos{position};
-  std::for_each(h.position.begin(),h.position.end(),[&inHole,&h,&pos](auto const& p)
+  std::for_each(h.position.begin(),h.position.end(),[&inHole,&h,&pos, this](auto const& p)
     {
       inHole += distFrom(pos,p) <= h.radius;
     });

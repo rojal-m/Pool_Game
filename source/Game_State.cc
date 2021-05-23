@@ -26,7 +26,7 @@ Game_State :: Game_State (Item const & I)
    W_ball{*std::find_if(Balls.begin(),Balls.end(),[](auto const& b){
 	 return b.color == Col::WHITE;
        })},
-   stick{I.Stick, W_ball},
+   stick{I, W_ball},
    wall{},
    hole{},
    GameOver{I.GameOver}

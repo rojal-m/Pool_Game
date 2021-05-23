@@ -7,12 +7,14 @@ private:
   sf::Vector2f position;
   float rotation;
   Ball & Wball;
-  
+  sf::Sound strike;
+
+
 public:
   bool shot;
   float power;
-  
-  Stick(sf::Texture const&,Ball &);
+
+  Stick(Item const&,Ball &);
   void update();
   void draw(sf::RenderWindow &);
   void updateRotation(sf::RenderWindow &);

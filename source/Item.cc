@@ -33,7 +33,7 @@ SoundBuffer Item::loadSoundBuffer(std::string const& a)
   return S;
 }
 
-Texture const& Item::getBallTextureByColor(Col C)
+Texture const& Item::getBallTextureByColor(Col C) const
 {
   switch(C)
   {
