@@ -7,6 +7,16 @@
 
 class Menu_State: public State
 {
+
+private:
+  sf::Sprite bg;
+  sf::Sprite bg1;
+  sf::Sprite instruct;
+  sf::Sprite btn1;
+  sf::Sprite btn2;
+  sf::Vector2i m{};
+  bool play;
+
 public:
   Menu_State(Item const &);
   virtual void handle_event (sf::Event &) override;
@@ -14,16 +24,6 @@ public:
   virtual void render (sf::RenderWindow &) override;
   virtual int get_next_state() override;
 
-  void MoveUp();
-  void MoveDown();
+  bool btn1_hov();
 
-private:
-  sf::Sprite bg;
-  sf::Sprite bg1;
-  int selectedItemIndex;
-  sf::Text menu[MAX_NUMBER_OF_ITEMS];
-  Item const & _I;
-  sf::Text text{};
-  sf::Font font{};
-  bool play;
 };
