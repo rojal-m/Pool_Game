@@ -12,6 +12,7 @@ private:
   sf::Sprite bg;
   std::vector<Ball> Balls;
   Ball & W_ball;
+  Ball & B_ball;
   Stick stick;
   Wall wall;
   Hole hole;

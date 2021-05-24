@@ -25,7 +25,7 @@ void Menu_State::handle_event(sf::Event & event)
         {
           auto b{event.mouseButton};
           if ( b.button == Mouse::Button::Left)
-          play==true;
+          play = true;
         }
     }
 }
@@ -60,7 +60,7 @@ int Menu_State :: get_next_state()
     }
 }
 
-void Menu_State::btn1_hov()
+bool Menu_State::btn1_hov()
 {
   FloatRect r(m.x, m.y, 1, 1 );
   if(r.intersects(btn1.getGlobalBounds()))

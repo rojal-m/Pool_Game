@@ -13,7 +13,7 @@ class Item
 public:
   Texture Menu_bg;
   Texture Game_bg;
-    Texture Stick;
+  Texture Stick;
 
   Texture W_B;
   Texture B_B;
@@ -24,7 +24,6 @@ public:
   Texture B5;
   Texture B6;
   Texture B7;
-  Texture B8;
   Texture B9;
   Texture B10;
   Texture B11;

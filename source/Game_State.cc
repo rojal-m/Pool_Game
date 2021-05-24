@@ -26,6 +26,10 @@ Game_State :: Game_State (Item const & I)
    W_ball{*std::find_if(Balls.begin(),Balls.end(),[](auto const& b){
 	 return b.color == Col::WHITE;
        })},
+       B_ball{*std::find_if(Balls.begin(), Balls.end(),[](auto const& b){
+         return b.color==Col::BLACK;
+       })},
+
    stick{I, W_ball},
    wall{},
    hole{},
@@ -73,8 +77,9 @@ void Game_State :: update ()
   if (!ballsMoving(Balls) && stick.shot)
     stick.reposition(W_ball.position);
 
-  if (!B_ball.visible)
+  if (!B_ball.visible){
     GameOver.setPosition(screen_width/2, screen_height/2);
+  }
 }
 
 void Game_State :: render (RenderWindow & window)
