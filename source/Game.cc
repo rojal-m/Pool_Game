@@ -22,7 +22,7 @@ Game :: Game (std::string const & title,
 
     states.insert(std::pair<int,
                   std::unique_ptr<State>>({GAME_STATE,
-                                       std::make_unique<Game_State>(I)}));
+                                           std::make_unique<Game_State>(I)}));
 }
 
 

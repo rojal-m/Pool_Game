@@ -9,20 +9,6 @@
 class Player
 {
 public:
-<<<<<<< HEAD
-
-  Player(Col, std::string);
-  void update();
-  void render(sf::RenderWindow &);
-
-  Player(Col, std::string&);
-
-  bool takeTurn();
-  void shootBall();
-
-  int playerID{};
-  bool turn{};
-=======
   Player(std::string const&, sf::Font &, bool);
   ~Player() = default;
   Player(const Player&) = default;
@@ -33,7 +19,6 @@ public:
   bool assigned{false};
   bool turn;
 
->>>>>>> 9c4190a51374d41eb474ab00413f30ec7b2e7ec9
 
 private:
   sf::Text name;
