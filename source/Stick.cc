@@ -52,7 +52,7 @@ void Stick::increasePower()
 {
   if(power > MAX_POWER)
     return;
-  power += 120;
+  power += 100;
   Vector2f v = stick.getOrigin();
   stick.setOrigin(v.x+5,v.y);
 }
@@ -63,7 +63,7 @@ void Stick::decreasePower()
     power = 0;
     return;
   }
-  power -= 120;
+  power -= 100;
   Vector2f v = stick.getOrigin();
   stick.setOrigin(v.x-5,v.y);
 }

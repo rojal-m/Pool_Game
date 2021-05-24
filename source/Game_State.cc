@@ -6,7 +6,7 @@ using namespace sf;
 using namespace std;
 
 Game_State :: Game_State (Item const & I)
-  :bg{I.Background},
+  :bg{I.Game_bg},
    Balls {Ball{Vector2f{413,413},I,Col::WHITE},
           Ball{Vector2f{1022,413},I,Col::YELLOW},
 	  Ball{Vector2f{1056,393},I,Col::YELLOW},
@@ -73,8 +73,8 @@ void Game_State :: update ()
   if (!ballsMoving(Balls) && stick.shot)
     stick.reposition(W_ball.position);
 
-  if (!W_ball.visible)
-    GameOver.setPosition(100,0);
+  if (!B_ball.visible)
+    GameOver.setPosition(screen_width/2, screen_height/2);
 }
 
 void Game_State :: render (RenderWindow & window)
