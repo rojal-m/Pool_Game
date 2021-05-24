@@ -1,5 +1,11 @@
+#ifndef STICK_H
+#define STICK_H
+
 #include <SFML/Graphics.hpp>
 #include "Ball.h"
+
+
+
 class Stick
 {
 private:
@@ -23,3 +29,5 @@ public:
   void shoot();
   void reposition();
 };
+
+#endif

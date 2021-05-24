@@ -5,6 +5,7 @@
 
 int const MENU_STATE{0};
 int const GAME_STATE{1};
+int const GAME_STATE_2{2};
 
 class State
 {
@@ -17,4 +18,3 @@ public:
 };
 
 #endif
-

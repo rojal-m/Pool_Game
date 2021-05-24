@@ -1,5 +1,6 @@
 #include <string>
 #include <stdexcept>
+#include <iostream>
 #include "Menu_State.h"
 
 using namespace sf;
@@ -18,13 +19,29 @@ Menu_State :: Menu_State (Item & I)
 
 void Menu_State::handle_event(sf::Event & event)
 {
-  if (btn1_hov())
+  if (btn1_hov() )
   {
     if ( event.type == Event::MouseButtonPressed)
-    {
+     {
       auto b{event.mouseButton};
       if ( b.button == Mouse::Button::Left)
-	play = true;
+        {
+         	play = true;
+          btnClick = 1;
+        }
+    }
+  }
+
+  if (btn2_hov())
+  {
+      if ( event.type == Event::MouseButtonPressed)
+      {
+        auto b{event.mouseButton};
+        if ( b.button == Mouse::Button::Left)
+        {
+          play = true;
+          btnClick = 2;
+        }
     }
   }
 }
@@ -34,10 +51,10 @@ void Menu_State :: update()
 
 }
 
-void Menu_State :: render (RenderWindow & target)
+void Menu_State::render (RenderWindow & target)
 {
   m = Mouse::getPosition(target);
-    
+
   target.draw(bg1);
   target.draw(bg);
   target.draw(instruct);
@@ -45,18 +62,31 @@ void Menu_State :: render (RenderWindow & target)
   target.draw(btn2);
 }
 
+
 int Menu_State :: get_next_state()
 {
   if (play)
   {
     play = false;
-    return GAME_STATE;
+    if (btnClick == 1)
+    {
+      return GAME_STATE;
+    }
+    else if (btnClick == 2 )
+    {
+        return 2;
+    }
+    else
+    {
+      return MENU_STATE;
+    }
   }
   else
   {
     return MENU_STATE;
   }
 }
+
 
 bool Menu_State::btn1_hov()
 {
@@ -68,4 +98,17 @@ bool Menu_State::btn1_hov()
   }
   btn1.setScale(1.f,1.f);
   return false;
+}
+
+bool Menu_State::btn2_hov()
+{
+  FloatRect r(m.x,m.y,1,1);
+  if(r.intersects(btn2.getGlobalBounds()))
+  {
+    btn2.setScale(1.2f,1.2f);
+    return true;
+  }
+  btn2.setScale(1.f,1.f);
+  return false;
+
 }

@@ -13,7 +13,8 @@ class Menu_State: public State
   sf::Sprite btn2;
   sf::Vector2i m{};
   bool play;
-  
+  int btnClick {0};
+
 public:
   Menu_State(Item &);
   virtual void handle_event (sf::Event &) override;
@@ -22,4 +23,5 @@ public:
   virtual int get_next_state() override;
 
   bool btn1_hov();
+  bool btn2_hov();
 };

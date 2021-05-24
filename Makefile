@@ -23,10 +23,10 @@ LDFLAGS += -L$(SFML_ROOT)/lib -lsfml-graphics -lsfml-audio -lsfml-window -lsfml-
 MAINFILE := main.cpp
 
 # Object modules
-OBJECTS =  $(OBJDIR)/main.o  $(OBJDIR)/Game.o  $(OBJDIR)/Game_State.o  $(OBJDIR)/Menu_State.o  $(OBJDIR)/Ball.o  $(OBJDIR)/Hole.o  $(OBJDIR)/Item.o  $(OBJDIR)/Stick.o  $(OBJDIR)/Wall.o $(OBJDIR)/Player.o 
+OBJECTS =  $(OBJDIR)/main.o  $(OBJDIR)/Game.o  $(OBJDIR)/Game_State.o  $(OBJDIR)/Game_State_2.o $(OBJDIR)/Menu_State.o  $(OBJDIR)/Ball.o  $(OBJDIR)/Hole.o  $(OBJDIR)/Item.o  $(OBJDIR)/Stick.o  $(OBJDIR)/Wall.o $(OBJDIR)/Player.o
 
 # Main objetice - created with 'make' or 'make main'.
-main: $(OBJECTS) Makefile 
+main: $(OBJECTS) Makefile
 	$(CCC) -I$(IDIR) $(CCFLAGS) -o main $(OBJECTS) $(LDFLAGS)
 
 # Part objectives
@@ -39,7 +39,11 @@ $(OBJDIR)/Game.o: $(SRC)/Game.cc dir
 $(OBJDIR)/Game_State.o: $(SRC)/Game_State.cc dir
 	$(CCC) -I$(IDIR) $(CCFLAGS) -c $(SRC)/Game_State.cc -o $(OBJDIR)/Game_State.o
 
-$(OBJDIR)/Menu_State.o: $(SRC)/Menu_State.cc dir 
+$(OBJDIR)/Game_State_2.o: $(SRC)/Game_State_2.cc dir
+	 $(CCC) -I$(IDIR) $(CCFLAGS) -c $(SRC)/Game_State_2.cc -o $(OBJDIR)/Game_State_2.o
+
+
+$(OBJDIR)/Menu_State.o: $(SRC)/Menu_State.cc dir
 	$(CCC) -I$(IDIR) $(CCFLAGS) -c $(SRC)/Menu_State.cc -o $(OBJDIR)/Menu_State.o
 
 $(OBJDIR)/Ball.o: $(SRC)/Ball.cc dir

@@ -4,6 +4,7 @@
 #include "State.h"
 #include "Menu_State.h"
 #include "Game_State.h"
+#include "Game_State_2.h"
 
 using namespace sf;
 
@@ -23,6 +24,10 @@ Game :: Game (std::string const & title,
     states.insert(std::pair<int,
                   std::unique_ptr<State>>({GAME_STATE,
                                            std::make_unique<Game_State>(I)}));
+
+   states.insert(std::pair<int,
+                std::unique_ptr<State>>({GAME_STATE_2,
+                                        std::make_unique<Game_State_2>(I)}));
 }
 
 
