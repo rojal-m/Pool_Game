@@ -10,7 +10,7 @@ using namespace sf;
 Game :: Game (std::string const & title,
               unsigned            width,
               unsigned            height,
-	      Item const & I)
+	      Item & I)
   : window { VideoMode { width, height },
     title, Style::Titlebar | Style::Close },
     current_state{ MENU_STATE },
@@ -22,7 +22,7 @@ Game :: Game (std::string const & title,
 
     states.insert(std::pair<int,
                   std::unique_ptr<State>>({GAME_STATE,
-                                           std::make_unique<Game_State>(I)}));
+                                       std::make_unique<Game_State>(I)}));
 }
 
 

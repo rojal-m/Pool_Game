@@ -18,7 +18,7 @@ private:
   bool play;
 
 public:
-  Menu_State(Item const &);
+  Menu_State(Item &);
   virtual void handle_event (sf::Event &) override;
   virtual void update () override;
   virtual void render (sf::RenderWindow &) override;

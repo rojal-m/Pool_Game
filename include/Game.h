@@ -11,7 +11,7 @@
 class Game
 {
 public:
-  Game (std::string const &, unsigned, unsigned, Item const &);
+  Game (std::string const &, unsigned, unsigned, Item  &);
   void start ();
 private:
   sf::RenderWindow window;

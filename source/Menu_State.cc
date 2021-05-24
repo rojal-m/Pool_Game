@@ -4,7 +4,7 @@
 
 using namespace sf;
 
-Menu_State :: Menu_State (Item const & I)
+Menu_State :: Menu_State (Item & I)
   :bg{I.ball_8}, bg1{I.Menu_bg}, instruct{I.Controls}, btn1{I.Play_Btn}, btn2{I.Play_Btn2}, play{false}
 {
   bg.setScale(0.45f, 0.45f);
