@@ -1,4 +1,3 @@
-
 #include <string>
 #include <stdexcept>
 #include "Game_State.h"

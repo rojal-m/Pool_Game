@@ -11,11 +11,13 @@ Stick::Stick(Item const& I ,Ball & w)
   :stick{I.Stick}, position{}, rotation {0}, Wball{w}, strike{I.strikeBuffer}, shot{false}, power{0}
 {
   stick.setOrigin(970,11);
-  position = Vector2f{413.0,413.0};
+  position = Wball.position;
 }
 
 void Stick::update()
 {
+  if (!visible)
+    return;
   if(shot)
   {
     position = Vector2f{-1000,-1000};
@@ -25,17 +27,20 @@ void Stick::update()
 
 void Stick::draw(RenderWindow& w)
 {
+  if (!visible)
+    return;
   //std::cout<<rotation;
   stick.setRotation(rotation);
   stick.setPosition(position);
   w.draw(stick);
 }
 
-void Stick::updateRotation(RenderWindow & w)
+void Stick::updateRotation(Vector2f & v)
 {
-  auto mp{sf::Mouse::getPosition(w)};
-  float opposite = mp.y - position.y;
-  float adjescent = mp.x - position.x;
+  if (!visible)
+    return;
+  float opposite = v.y - position.y;
+  float adjescent = v.x - position.x;
   if(opposite < 0 && adjescent < 0)
     rotation = 180+(180*atan(opposite/adjescent))/pi;
   if(opposite > 0 && adjescent < 0)
@@ -50,6 +55,8 @@ void Stick::updateRotation(RenderWindow & w)
 
 void Stick::increasePower()
 {
+  if (!visible)
+    return;
   if(power > MAX_POWER)
     return;
   power += 100;
@@ -59,6 +66,8 @@ void Stick::increasePower()
 
 void Stick::decreasePower()
 {
+  if (!visible)
+    return;
   if(power <= 0){
     power = 0;
     return;
@@ -70,6 +79,8 @@ void Stick::decreasePower()
 
 void Stick::shoot()
 {
+  if (!visible)
+    return;
   Wball.onShoot(power,rotation);
   power = 0;
   stick.setOrigin(950,11);
@@ -77,9 +88,11 @@ void Stick::shoot()
   strike.play();
 }
 
-void Stick::reposition(Vector2f const& pos)
+void Stick::reposition()
 {
-  position = pos;
+  if (!visible)
+    return;
+  position = Wball.position;
   stick.setOrigin(970,11);
   shot = false;
 }

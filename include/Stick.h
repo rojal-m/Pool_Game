@@ -9,17 +9,17 @@ private:
   Ball & Wball;
   sf::Sound strike;
 
-
 public:
   bool shot;
   float power;
+  bool visible{true};
 
   Stick(Item const&,Ball &);
   void update();
   void draw(sf::RenderWindow &);
-  void updateRotation(sf::RenderWindow &);
+  void updateRotation(sf::Vector2f &);
   void increasePower();
   void decreasePower();
   void shoot();
-  void reposition(sf::Vector2f const&);
+  void reposition();
 };

@@ -1,26 +1,25 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-//#include "State.h"
+#include "State.h"
+#include "Item.h"
 
-
-class Menu_State //: public State
+class Menu_State: public State
 {
-public:
-  Menu_State();
-  bool vs_bot();
-  bool vs_player();
-  void handle_event(sf::Event e) ;
-  void update() ;
-  void render(sf::RenderTarget & target) ;
-  int get_next_state() ;
-
-
-private:
-  sf::Text text;
-  sf::Font font{};
+  private:
+  sf::Sprite bg;
+  sf::Sprite bg1;
+  sf::Sprite instruct;
+  sf::Sprite btn1;
+  sf::Sprite btn2;
+  sf::Vector2i m{};
   bool play;
-  //Player player_1;
-  //Player player_2;
+  
+public:
+  Menu_State(Item const &);
+  virtual void handle_event (sf::Event &) override;
+  virtual void update () override;
+  virtual void render (sf::RenderWindow &) override;
+  virtual int get_next_state() override;
 
+  bool btn1_hov();
 };

@@ -23,7 +23,7 @@ LDFLAGS += -L$(SFML_ROOT)/lib -lsfml-graphics -lsfml-audio -lsfml-window -lsfml-
 MAINFILE := main.cpp
 
 # Object modules
-OBJECTS =  $(OBJDIR)/main.o  $(OBJDIR)/Game.o  $(OBJDIR)/Game_State.o  $(OBJDIR)/Menu_State.o  $(OBJDIR)/Ball.o  $(OBJDIR)/Hole.o  $(OBJDIR)/Item.o  $(OBJDIR)/Stick.o  $(OBJDIR)/Wall.o 
+OBJECTS =  $(OBJDIR)/main.o  $(OBJDIR)/Game.o  $(OBJDIR)/Game_State.o  $(OBJDIR)/Menu_State.o  $(OBJDIR)/Ball.o  $(OBJDIR)/Hole.o  $(OBJDIR)/Item.o  $(OBJDIR)/Stick.o  $(OBJDIR)/Wall.o $(OBJDIR)/Player.o 
 
 # Main objetice - created with 'make' or 'make main'.
 main: $(OBJECTS) Makefile 
@@ -57,6 +57,9 @@ $(OBJDIR)/Stick.o: $(SRC)/Stick.cc dir
 $(OBJDIR)/Wall.o: $(SRC)/Wall.cc dir
 	$(CCC) -I$(IDIR) $(CCFLAGS) -c $(SRC)/Wall.cc -o $(OBJDIR)/Wall.o
 
+$(OBJDIR)/Player.o: $(SRC)/Player.cc dir
+	$(CCC) -I$(IDIR) $(CCFLAGS) -c $(SRC)/Player.cc -o $(OBJDIR)/Player.o
+
 dir:
 	@mkdir -p $(OBJDIR)
 
@@ -67,3 +70,6 @@ clean:
 # 'make zap' also removes the executable and backup files.
 zap: clean
 	@ \rm -rf main *~
+
+run:
+	./main

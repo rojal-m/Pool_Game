@@ -10,7 +10,7 @@
 using namespace sf;
 using namespace std;
 
-Ball::Ball(Vector2f const& Pos, Item const & I, Col c)
+Ball::Ball(Vector2f const& Pos, Item & I, Col c)
   :ball{I.getBallTextureByColor(c)}, collide{I.collideBuffer}, hole{I.holeBuffer}, side{I.sideBuffer}, position{Pos},  velocity{0,0}, moving{false}, color{c}, visible{true}
 {
   auto a = ball.getGlobalBounds();
@@ -50,10 +50,10 @@ void Ball::onShoot(float&p,float r)
   moving = true;
 }
 
-void Ball::handleBallInHole(Hole const& h)
+bool Ball::handleBallInHole(Hole const& h)
 {
-  if(!visible)
-    return;
+  if(!visible || ballInHand)
+    return false;
   bool inHole{};
   Vector2f pos{position};
   std::for_each(h.position.begin(),h.position.end(),[&inHole,&h,&pos, this](auto const& p)
@@ -63,27 +63,34 @@ void Ball::handleBallInHole(Hole const& h)
 
   if(!inHole)
   {
-    return;
+    return false;
+  }
+  if(ballInHand)
+  {
+    return true;
   }
   visible = false;
   moving = false;
 
   hole.play();
-
+  return true;
 }
 
 
-void Ball::collideWith(Ball & B)
+bool Ball::collideWith(Ball & B)
 {
-  if(!visible || !B.visible)
-    return;
+  if(!visible || !B.visible )
+    return false;
   //find normal vector
   const auto n{position - B.position};
 
   //find distance
   const auto dist{length(n)};
   if(dist > BALL_DIAMETER)
-    return;
+    return false;
+
+  if(ballInHand)
+    return true;
 
   collide.play();
 
@@ -113,13 +120,13 @@ void Ball::collideWith(Ball & B)
 
   moving = true;
   B.moving = true;
-
+  return true;
 }
 
-void Ball::collideWith(Wall & w)
+bool Ball::collideWith(Wall & w)
 {
-  if(!visible || !moving)
-    return;
+  if(!visible || !moving || ballInHand)
+    return false;
   bool collided = false;
   if(position.y <= w.topY+(BALL_DIAMETER/2))
   {
@@ -147,9 +154,11 @@ void Ball::collideWith(Wall & w)
   }
 
   if(collided)
-
+  {
     side.play();
-  velocity *= FRICTION;
-
-
+    velocity *= FRICTION;
+    return true;
+  }
+  else
+  {return false;}
 }

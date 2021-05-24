@@ -4,12 +4,8 @@
 
 using namespace sf;
 
-Menu_State :: Menu_State (Item & I)
-<<<<<<< HEAD
-  :bg{I.ball_8}, bg1{I.Menu_bg}, instruct{I.Controls}, btn1{I.Play_Btn}, btn2{I.Play_Btn2}, play{false}
-=======
+Menu_State :: Menu_State (Item const & I)
   :bg{I.ball_8}, bg1{I.Menu_Bg}, instruct{I.Controls}, btn1{I.Play_Btn}, btn2{I.Play_Btn2}, play { false }
->>>>>>> 9c4190a51374d41eb474ab00413f30ec7b2e7ec9
 {
   bg.setScale(0.45f,0.45f);
   bg.setPosition(1000.f,100.f);
