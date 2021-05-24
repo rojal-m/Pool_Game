@@ -8,7 +8,8 @@ class Player
 {
 public:
   Player(Col, std::string);
-
+  void update();
+  void render(sf::RenderWindow &);
   bool takeTurn();
   void shootBall();
 
