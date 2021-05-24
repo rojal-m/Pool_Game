@@ -1,13 +1,17 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
+#include <cmath>
+#include <iterator>
+#include <algorithm>
+#include <utility>
 #include "Ball.h"
-#include <math.h>
 
 using namespace sf;
+using namespace std;
 
 Ball::Ball(Vector2f const& Pos, Item & I, Col c)
-:ball{I.getBallTextureByColor(c)}, position{Pos}, velocity{0,0}, moving{false}, color{c}, visible{true}
+  :ball{I.getBallTextureByColor(c)}, collide{I.collideBuffer}, hole{I.holeBuffer}, side{I.sideBuffer}, position{Pos},  velocity{0,0}, moving{false}, color{c}, visible{true}
 {
   auto a = ball.getGlobalBounds();
   ball.setOrigin(a.width/2,a.height/2);
@@ -16,23 +20,25 @@ Ball::Ball(Vector2f const& Pos, Item & I, Col c)
 void Ball::update()
 {
   if(!visible)
-  return;
+    return;
+  //std::cout<<velocity.x<<" "<<velocity.y<<"\n";
+  position += velocity/delta;
 
- position += velocity/delta;
- velocity =  velocity*FRICTION;
+  //std::cout<<velocity.x<<" "<<(velocity.x /delta)<<" "<<velocity.y<<"\n";
+  velocity =  velocity*FRICTION;
 
- if(length(velocity) < 10)
- {
-   velocity.x = 0;
-   velocity.y = 0;
-   moving = false;
+  if(length(velocity) < 10)
+  {
+    velocity.x = 0;
+    velocity.y = 0;
+    moving = false;
   }
 }
 
 void Ball::draw(RenderWindow& w)
 {
   if(!visible)
-  return;
+    return;
   ball.setPosition(position);
   w.draw(ball);
 }
@@ -47,31 +53,41 @@ void Ball::onShoot(float&p,float r)
 void Ball::handleBallInHole(Hole const& h)
 {
   if(!visible)
-  return;
+    return;
   bool inHole{};
   Vector2f pos{position};
-  std::for_each(h.position.begin(),h.position.end(),[&inHole,&h,&pos](auto const& p){
-  inHole += distFrom(pos,p) <= h.radius;
-  });
+  std::for_each(h.position.begin(),h.position.end(),[&inHole,&h,&pos, this](auto const& p)
+    {
+      inHole += distFrom(pos,p) <= h.radius;
+    });
+
   if(!inHole)
-{
-  return;
-}
+  {
+    return;
+  }
   visible = false;
   moving = false;
+
+  hole.play();
+
 }
 
-void Ball::collideWith(Ball & b)
+
+void Ball::collideWith(Ball & B)
 {
   if(!visible || !B.visible)
-  return;
+    return;
   //find normal vector
   const auto n{position - B.position};
 
   //find distance
   const auto dist{length(n)};
   if(dist > BALL_DIAMETER)
-  return;
+    return;
+
+  collide.play();
+
+
   const auto mtd{n*((BALL_DIAMETER-dist)/dist)};
   position = position + mtd*(0.5f);
   B.position = B.position - mtd*(0.5f);
@@ -97,39 +113,43 @@ void Ball::collideWith(Ball & b)
 
   moving = true;
   B.moving = true;
+
 }
 
-void Ball::collideWith2(Wall & w)
+void Ball::collideWith(Wall & w)
 {
-if(!visible || !moving)
-return;
+  if(!visible || !moving)
+    return;
+  bool collided = false;
+  if(position.y <= w.topY+(BALL_DIAMETER/2))
+  {
+    position.y = w.topY+(BALL_DIAMETER/2);
+    velocity = Vector2f{velocity.x,-velocity.y};
+    collided = true;
+  }
+  if(position.x >= w.rightX-(BALL_DIAMETER/2))
+  {
+    position.x = w.rightX-(BALL_DIAMETER/2);
+    velocity = Vector2f{-velocity.x,velocity.y};
+    collided = true;
+  }
+  if(position.y >= w.bottomY-(BALL_DIAMETER/2))
+  {
+    position.y = w.bottomY-(BALL_DIAMETER/2);
+    velocity = Vector2f{velocity.x,-velocity.y};
+    collided = true;
+  }
+  if(position.x <= w.leftX+(BALL_DIAMETER/2))
+  {
+    position.x = w.leftX+(BALL_DIAMETER/2);
+    velocity = Vector2f{-velocity.x,velocity.y};
+    collided = true;
+  }
 
-bool collided = false;
-if(position.y <= w.topY+(BALL_DIAMETER/2))
-{
-  position.y = w.topY+(BALL_DIAMETER/2);
-  velocity = Vector2f{velocity.x,-velocity.y};
-  collided = true;
-}
-if(position.x >= w.rightX-(BALL_DIAMETER/2))
-{
-  position.x = w.rightX-(BALL_DIAMETER/2);
-  velocity = Vector2f{-velocity.x,velocity.y};
-  collided = true;
-}
-if(position.y >= w.bottomY-(BALL_DIAMETER/2))
-{
-  position.y = w.bottomY-(BALL_DIAMETER/2);
-  velocity = Vector2f{velocity.x,-velocity.y};
-  collided = true;
-}
-if(position.x <= w.leftX+(BALL_DIAMETER/2))
-{
-  position.x = w.leftX+(BALL_DIAMETER/2);
-  velocity = Vector2f{-velocity.x,velocity.y};
-  collided = true;
-}
+  if(collided)
 
-if(collided)
+    side.play();
   velocity *= FRICTION;
+
+
 }

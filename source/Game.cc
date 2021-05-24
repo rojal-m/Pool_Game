@@ -10,7 +10,7 @@ using namespace sf;
 Game :: Game (std::string const & title,
               unsigned            width,
               unsigned            height,
-	      Item const & I)
+	      Item & I)
   : window { VideoMode { width, height },
     title, Style::Titlebar | Style::Close },
     current_state{ MENU_STATE },

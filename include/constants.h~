@@ -1,12 +1,18 @@
 #pragma once
 
-/*
- * In this file we define some global constants.
- */
-int const screen_width  { 1000 };
-int const screen_height { 1000 };
+int const screen_width  { 1500 };
+int const screen_height { 890 };
+float const pi { 3.14159265359 };
+float const delta { 100 };
+float const BALL_DIAMETER { 36 };
+float const MAX_POWER { 2000 };
+float const FRICTION { 0.995 };
+double const fps { 120.0 };
 
-/*
- * define how many fps we want our program to run in.
- */
-double const fps { 60.0 };
+enum Col
+{
+  RED = 1,
+  YELLOW = 2,
+  BLACK = 3,
+  WHITE = 4
+};

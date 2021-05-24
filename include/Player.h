@@ -3,29 +3,29 @@
 
 #include <string>
 #include <SFML/Graphics.hpp>
+#include "constants.h"
+#include "Ball.h"
 
 class Player
 {
 public:
-<<<<<<< HEAD
-  Player(Col, std::string);
+  Player(std::string const&, sf::Font &, bool);
+  ~Player() = default;
+  Player(const Player&) = default;
+  Player& operator=(Player&) = default;
   void update();
   void render(sf::RenderWindow &);
-=======
-  Player(Col, std::string&);
+  Col assignBalls{};
+  bool assigned{false};
+  bool turn;
 
->>>>>>> 66a9e1f90c76acf17c98e75b51c8009ab3e3d046
-  bool takeTurn();
-  void shootBall();
-
-  int playerID{};
-  bool turn{};
 
 private:
-  Col assignBalls;
-  std::string playerName;
+  sf::Text name;
+
   //Ball* currBall;
 };
 
+void takeTurn(Player &, Player &);
 
 #endif

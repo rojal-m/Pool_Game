@@ -7,7 +7,12 @@ using namespace sf;
 Player::Player(string const& N,Font & F,bool B)
   :turn{B}, name{N,F,30}
 {
-  name.setPosition(100,840);
+  name.setPosition(100,830); 
+}
+
+bool Player::takeTurn()
+{
+  return true;
 }
 
 void Player::update()
@@ -21,10 +26,4 @@ void Player::render(RenderWindow & window)
     return;
 
   window.draw(name);
-}
-
-void takeTurn(Player & P1, Player & P2)
-{
-  P1.turn = !P1.turn;
-  P2.turn = !P2.turn;
 }

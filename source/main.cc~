@@ -3,7 +3,7 @@
 
 int main ()
 {
-  Item I;
+  Item const I;
   Game g { "Pool", screen_width, screen_height, I};
   g.start();
 }

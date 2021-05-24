@@ -6,13 +6,13 @@ float const pi { 3.14159265359 };
 float const delta { 100 };
 float const BALL_DIAMETER { 36 };
 float const MAX_POWER { 2000 };
-float const FRICTION { 0.995 };
+float const FRICTION { 0.9895 };
 double const fps { 120.0 };
 
 enum Col
 {
-  RED = 1,
-  YELLOW = 2,
+  SOLIDS = 1,
+  STRIPES = 2,
   BLACK = 3,
   WHITE = 4
 };
