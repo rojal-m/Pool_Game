@@ -11,14 +11,32 @@ using namespace sf;
 class Item
 {
 public:
-  Texture Background;
-  Texture Stick;
+  Texture Menu_bg;
+  Texture Game_bg;
+    Texture Stick;
+
   Texture W_B;
   Texture B_B;
   Texture B1;
   Texture B2;
+  Texture B3;
+  Texture B4;
+  Texture B5;
+  Texture B6;
+  Texture B7;
+  Texture B8;
+  Texture B9;
+  Texture B10;
+  Texture B11;
+  Texture B12;
+  Texture B13;
+  Texture B14;
+  Texture B15;
+  Texture Controls;
+  Texture Play_Btn;
+  Texture Play_Btn2;
   Texture GameOver;
-  Texture ball_8; 
+  Texture ball_8;
 
   SoundBuffer collideBuffer;
   SoundBuffer holeBuffer;

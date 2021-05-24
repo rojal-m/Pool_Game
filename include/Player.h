@@ -7,18 +7,18 @@
 class Player
 {
 public:
-  Player(Col, std::string);
+  Player(Col, std::string&);
 
   bool takeTurn();
   void shootBall();
 
-  int playerID;
-  bool turn;
+  int playerID{};
+  bool turn{};
 
 private:
   Col assignBalls;
   std::string playerName;
-  Ball* currBall;
+  //Ball* currBall;
 };
 
 
