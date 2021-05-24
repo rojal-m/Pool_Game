@@ -14,7 +14,11 @@ public:
   virtual void update () = 0;
   virtual void render(sf::RenderWindow &) = 0;
   virtual int get_next_state() = 0;
+
+private:
+  Player player_1;
+  Player player_2;
+
 };
 
 #endif
-
