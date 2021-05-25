@@ -20,10 +20,11 @@ public:
   sf::Vector2f velocity;
   bool moving;
   Col color;
+  Id id;
   bool visible;
   bool ballInHand{false};
 
-  Ball(sf::Vector2f const&, Item &, Col );
+  Ball(sf::Vector2f const&, Item &, Col , Id);
   void update();
   void draw(sf::RenderWindow &);
   void onShoot(float &, float);

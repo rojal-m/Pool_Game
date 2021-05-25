@@ -15,7 +15,6 @@ private:
 
   std::vector<Ball*> Balls;
   Ball * W_ball;
-  Ball * B_ball;
   Stick * stick;
   Wall * wall;
   Hole * hole;
@@ -25,10 +24,10 @@ private:
   bool end_game{false};
 
   bool firstTouch{false};
-  Col firstTouchCol{};
+  Id firstTouchId{};
 
-  bool firstBallIHole{false};
-  std::vector<Col> ballInHole{};
+  std::vector<Id> ballOnBoard{};
+  bool ballInHole{false};
 
   void ShootBall1();
   void W_ballInHand();

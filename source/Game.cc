@@ -15,13 +15,10 @@ Game :: Game (std::string const & title,
   : window { VideoMode { width, height },
     title, Style::Titlebar | Style::Close },
     current_state{ MENU_STATE },
-    running { true }
+    running { true },
+    _item{I}
 {
-    states.insert(std::pair<int,  std::unique_ptr<State>>({MENU_STATE, std::make_unique<Menu_State>(I)}));
-
-    states.insert(std::pair<int,  std::unique_ptr<State>>({GAME_STATE, std::make_unique<Game_State>(I)}));
-
-    states.insert(std::pair<int,  std::unique_ptr<State>>({GAME_STATE_2,  std::make_unique<Game_State_2>(I)}));
+    states.insert(std::pair<int,  std::unique_ptr<State>>({MENU_STATE, std::make_unique<Menu_State>(_item)}));
 }
 
 
@@ -36,6 +33,15 @@ void Game :: start ()
     states.at(current_state) -> render(window);
     window.display ();
     current_state = states.at(current_state) -> get_next_state();
+    if (current_state != MENU_STATE)
+    {
+      handle_state();
+    }
+    else
+    {
+      states.erase(GAME_STATE);
+      states.erase(GAME_STATE_2);
+    }
     delay (clock);
   }
 }
@@ -56,4 +62,16 @@ void Game :: delay (sf::Clock & clock) const
 {
   sleep (milliseconds (1000.0 / fps) - clock.getElapsedTime ());
   clock.restart ();
+}
+
+void Game :: handle_state()
+{
+  if (current_state == GAME_STATE)
+  {
+    states.insert(std::pair<int,  std::unique_ptr<State>>({GAME_STATE, std::make_unique<Game_State>(_item)}));
+  }
+  if (current_state == GAME_STATE_2)
+  {
+    states.insert(std::pair<int,  std::unique_ptr<State>>({GAME_STATE_2,  std::make_unique<Game_State_2>(_item)}));
+  }
 }

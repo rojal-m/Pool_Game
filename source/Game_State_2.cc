@@ -9,22 +9,19 @@ using namespace std;
 Game_State_2 :: Game_State_2 (Item & I)
   :bg{I.Game_Bg},
    GameOver{I.GameOver},
-   Balls{ new Ball{Vector2f{403.5,413},I,Col::WHITE},
-          new Ball{Vector2f{1028.5,413},I,Col::SOLIDS},
-	        new Ball{Vector2f{1062.5,393},I,Col::SOLIDS},
-	        new Ball{Vector2f{1062.5,433},I,Col::SOLIDS},
-	        new Ball{Vector2f{1096.5,374},I,Col::SOLIDS},
-	        new Ball{Vector2f{1096.5,413},I,Col::STRIPES},
-	        new Ball{Vector2f{1096.5,452},I,Col::SOLIDS},
-	        new Ball{Vector2f{1132.5,393},I,Col::SOLIDS},
-	        new Ball{Vector2f{1132.5,433},I,Col::SOLIDS},
-	        new Ball{Vector2f{1168.5,413},I,Col::BLACK}},
+   Balls{ new Ball{Vector2f{403.5,413},I,Col::WHITE,Id::B0},
+          new Ball{Vector2f{1028.5,413},I,Col::SOLIDS,Id::B1},
+	        new Ball{Vector2f{1062.5,393},I,Col::SOLIDS,Id::B3},
+	        new Ball{Vector2f{1062.5,433},I,Col::SOLIDS,Id::B2},
+	        new Ball{Vector2f{1096.5,374},I,Col::SOLIDS,Id::B5},
+	        new Ball{Vector2f{1096.5,413},I,Col::STRIPES,Id::B9},
+	        new Ball{Vector2f{1096.5,452},I,Col::SOLIDS,Id::B4},
+	        new Ball{Vector2f{1132.5,393},I,Col::SOLIDS,Id::B7},
+	        new Ball{Vector2f{1132.5,433},I,Col::SOLIDS,Id::B6},
+	        new Ball{Vector2f{1168.5,413},I,Col::BLACK,Id::B8}},
 
    W_ball{*std::find_if(Balls.begin(),Balls.end(),[](auto const& b){
 	 return b->color == Col::WHITE;
-       })},
-   B_ball{*std::find_if(Balls.begin(),Balls.end(),[](auto const& b){
-	 return b->color == Col::BLACK;
        })},
    stick{new Stick{I, *W_ball}},
    wall{new Wall{}},
@@ -32,6 +29,11 @@ Game_State_2 :: Game_State_2 (Item & I)
    p1{"Player1",I.font,true},
    p2{"Player2",I.font,false}
 {
+  std::for_each(Balls.begin(),Balls.end(), [this](Ball * B){
+        if(B->id != Id::B0)
+        ballOnBoard.push_back(B->id);
+    });
+  std::sort(ballOnBoard.begin(), ballOnBoard.end());
   GameOver.setOrigin(GameOver.getLocalBounds().width/2,GameOver.getLocalBounds().height/2);
   GameOver.setPosition(-1000,-1000);
 }
@@ -94,13 +96,13 @@ void Game_State_2:: update ()
     else
       gameLogic(p2,p1);
     firstTouch = false;
-    ballInHole.clear();
+    ballInHole = false;
   }
 
   if (!W_ball->visible || W_ball->ballInHand){
     W_ballInHand();
   }
-  if (!B_ball->visible){
+  if (ballOnBoard.size() == 0 ){
     GameOver.setPosition(screen_width/2,screen_height/2);
     stick->visible = false;
   }
@@ -149,18 +151,18 @@ void Game_State_2 :: handleCollisions(std::vector<Ball*> & b, Wall* W, Hole* h)
   {
     if((*i)->handleBallInHole(*h))
     {
-      if((*i)->color != Col::WHITE && !firstBallIHole)
+
+      if((*i)->id != Id::B0)
       {
-        firstBallIHole = true;
-        ballInHole.push_back((*i)->color);
-        std::cout << ballInHole.at(0) << '\n';
+        ballInHole = true;
+        auto it = std::find(ballOnBoard.begin(), ballOnBoard.end(), (*i)->id);
+        ballOnBoard.erase(it);
+        //std::cout << ballOnBoard.at(0) << '\n';
+        if(ballOnBoard.size() == 0 )
+          return;
+        continue;
       }
-      if((*i)->color != Col::WHITE && firstBallIHole)
-      {
-        ballInHole.push_back((*i)->color);
-        std::cout << ballInHole.at(0) << '\n';
-      }
-      if((*i)->color == Col::WHITE)
+      else
       {
         takeTurn(p1,p2);
       }
@@ -173,8 +175,8 @@ void Game_State_2 :: handleCollisions(std::vector<Ball*> & b, Wall* W, Hole* h)
         if(!firstTouch)
         {
           firstTouch = true;
-          firstTouchCol = (*j)->color;
-          std::cout << firstTouchCol << '\n';
+          firstTouchId = (*j)->id;
+          //std::cout << firstTouchId << '\n';
         }
       }
     }
@@ -198,14 +200,13 @@ void Game_State_2::gameLogic(Player & p1, Player & p2)
 {
   if(!firstTouch)
   {
+    takeTurn(p1,p2);
     W_ballInHand();
     return;
   }
-  if(p1.assigned)
-  {
-    if(p1.assignBalls == firstTouchCol)
+    if(ballOnBoard.at(0) == firstTouchId)
     {
-      if(ballInHole.size() > 0)
+      if(ballInHole)
       {
         return;
       }
@@ -217,34 +218,19 @@ void Game_State_2::gameLogic(Player & p1, Player & p2)
     }
     else
     {
+      if(ballInHole)
+      {
+        return;
+      }
+      else
+      {
       takeTurn(p1,p2);
       W_ballInHand();
       return;
     }
-  }
-  else
-  {
-    if(ballInHole.size() > 0)
-    {
-      if(firstBallIHole)
-      {
-        p1.assignBalls = ballInHole.at(0);
-        if(p1.assignBalls == Col::SOLIDS)
-          p2.assignBalls = Col::STRIPES;
-        else
-          p2.assignBalls = Col::SOLIDS;
-        p1.assigned = true;
-        p2.assigned =true;
-      }
-      return;
     }
-    else
-    {
-      takeTurn(p1,p2);
-      return;
-    }
-  }
 }
+
 
 void Game_State_2::W_ballInHand()
 {

@@ -18,8 +18,10 @@ private:
   std::map<int, std::unique_ptr<State>> states{};
   int current_state;
   bool running;
+  Item & _item;
   void handle_events();
   void delay (sf::Clock & clock) const;
+  void handle_state();
 };
 
 #endif
