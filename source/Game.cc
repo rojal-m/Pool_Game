@@ -17,17 +17,11 @@ Game :: Game (std::string const & title,
     current_state{ MENU_STATE },
     running { true }
 {
-    states.insert(std::pair<int,
-            std::unique_ptr<State>>({MENU_STATE,
-                                     std::make_unique<Menu_State>(I)}));
+    states.insert(std::pair<int,  std::unique_ptr<State>>({MENU_STATE, std::make_unique<Menu_State>(I)}));
 
-    states.insert(std::pair<int,
-                  std::unique_ptr<State>>({GAME_STATE,
-                                           std::make_unique<Game_State>(I)}));
+    states.insert(std::pair<int,  std::unique_ptr<State>>({GAME_STATE, std::make_unique<Game_State>(I)}));
 
-   states.insert(std::pair<int,
-                std::unique_ptr<State>>({GAME_STATE_2,
-                                        std::make_unique<Game_State_2>(I)}));
+    states.insert(std::pair<int,  std::unique_ptr<State>>({GAME_STATE_2,  std::make_unique<Game_State_2>(I)}));
 }
 
 

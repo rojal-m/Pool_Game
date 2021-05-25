@@ -52,7 +52,7 @@ SoundBuffer Item::loadSoundBuffer(std::string const& s)
   SoundBuffer S;
   if(!S.loadFromFile ("item/Music/"+s))
     throw std::invalid_argument{"File not found"};
-  
+
   return S;
 }
 
@@ -61,7 +61,7 @@ Font Item::loadFont(std::string const& s)
   Font F;
   if(!F.loadFromFile ("item/font/"+s))
     throw std::invalid_argument{"File not found"};
-  
+
   return F;
 }
 Texture const& Item::getBallTextureByColor(Col C)
@@ -90,7 +90,7 @@ Texture const& Item::getBallTextureByColor(Col C)
       //case_solids++;
       return B4;
     case 6:
-      //case_solids++;
+      case_solids = 0;
       return B2;
     }
   case Col::STRIPES:
@@ -115,11 +115,12 @@ Texture const& Item::getBallTextureByColor(Col C)
       //case_stripes++;
       return B13;
     case 6:
-      //case_stripes++;
+      case_stripes = 0;
       return B11;
     }
   case Col::BLACK:
     return B_B;
+
   case Col::WHITE:
     return W_B;
   }

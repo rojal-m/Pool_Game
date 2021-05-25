@@ -11,14 +11,14 @@ Game_State_2 :: Game_State_2 (Item & I)
    GameOver{I.GameOver},
    Balls{ new Ball{Vector2f{403.5,413},I,Col::WHITE},
           new Ball{Vector2f{1028.5,413},I,Col::SOLIDS},
-	  new Ball{Vector2f{1062.5,393},I,Col::SOLIDS},
-	  new Ball{Vector2f{1062.5,433},I,Col::SOLIDS},
-	  new Ball{Vector2f{1096.5,374},I,Col::SOLIDS},
-	  new Ball{Vector2f{1096.5,413},I,Col::STRIPES},
-	  new Ball{Vector2f{1096.5,452},I,Col::SOLIDS},
-	  new Ball{Vector2f{1132.5,393},I,Col::SOLIDS},
-	  new Ball{Vector2f{1132.5,433},I,Col::SOLIDS},
-	  new Ball{Vector2f{1168.5,413},I,Col::BLACK}},
+	        new Ball{Vector2f{1062.5,393},I,Col::SOLIDS},
+	        new Ball{Vector2f{1062.5,433},I,Col::SOLIDS},
+	        new Ball{Vector2f{1096.5,374},I,Col::SOLIDS},
+	        new Ball{Vector2f{1096.5,413},I,Col::STRIPES},
+	        new Ball{Vector2f{1096.5,452},I,Col::SOLIDS},
+	        new Ball{Vector2f{1132.5,393},I,Col::SOLIDS},
+	        new Ball{Vector2f{1132.5,433},I,Col::SOLIDS},
+	        new Ball{Vector2f{1168.5,413},I,Col::BLACK}},
 
    W_ball{*std::find_if(Balls.begin(),Balls.end(),[](auto const& b){
 	 return b->color == Col::WHITE;
@@ -127,7 +127,7 @@ int Game_State_2 :: get_next_state()
     end_game = false;
     return MENU_STATE;
   }
-  return GAME_STATE;
+  return GAME_STATE_2;
 }
 
 bool Game_State_2 :: ballsMoving(std::vector<Ball*> & b)

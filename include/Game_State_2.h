@@ -1,4 +1,3 @@
-
 #include <vector>
 #include "State.h"
 #include "Item.h"
@@ -41,7 +40,7 @@ private:
 public:
   Game_State_2 (Item &);
   ~Game_State_2();
-  Game_State_2(const Game_State_2&) = default;
+  Game_State_2 (const Game_State_2&) = default;
   Game_State_2 operator=(const Game_State_2&);
   void handle_event (sf::Event &) override;
   void update () override;
