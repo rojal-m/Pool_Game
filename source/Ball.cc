@@ -43,13 +43,6 @@ void Ball::draw(RenderWindow& w)
   w.draw(ball);
 }
 
-void Ball::onShoot(float&p,float r)
-{
-  velocity.x = p * cos((r*pi)/180);
-  velocity.y = p * sin((r*pi)/180);
-  moving = true;
-}
-
 bool Ball::handleBallInHole(Hole const& h)
 {
   if(!visible || ballInHand)

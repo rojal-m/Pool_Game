@@ -26,7 +26,6 @@ public:
   Ball(sf::Vector2f const&, Item &, Col );
   void update();
   void draw(sf::RenderWindow &);
-  void onShoot(float &, float);
   bool handleBallInHole(Hole const&);
   bool collideWith(Ball &);
   bool collideWith(Wall &);

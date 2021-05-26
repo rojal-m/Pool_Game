@@ -9,7 +9,7 @@ using namespace std;
 Game_State :: Game_State (Item & I)
   :bg{I.Game_Bg},
    GameOver{I.GameOver},
-   Balls{ new Ball{Vector2f{403.5,413},I,Col::WHITE},
+   Balls{new Ball{Vector2f{403.5,413},I,Col::WHITE},
           new Ball{Vector2f{1028.5,413},I,Col::STRIPES},
 	  new Ball{Vector2f{1062.5,393},I,Col::STRIPES},
 	  new Ball{Vector2f{1062.5,433},I,Col::SOLIDS},

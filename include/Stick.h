@@ -4,8 +4,6 @@
 #include <SFML/Graphics.hpp>
 #include "Ball.h"
 
-
-
 class Stick
 {
 private:
