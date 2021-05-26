@@ -22,7 +22,8 @@ public:
 
 private:
   sf::Text name;
-
+  sf::Font & font;
+  sf::Text tur;
   //Ball* currBall;
 };
 

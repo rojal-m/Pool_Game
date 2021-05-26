@@ -9,6 +9,7 @@ using namespace std;
 Game_State :: Game_State (Item & I)
   :bg{I.Game_Bg},
    GameOver{I.GameOver},
+<<<<<<< HEAD
    Balls{new Ball{Vector2f{403.5,413},I,Col::WHITE},
           new Ball{Vector2f{1028.5,413},I,Col::STRIPES},
 	  new Ball{Vector2f{1062.5,393},I,Col::STRIPES},
@@ -25,6 +26,24 @@ Game_State :: Game_State (Item & I)
 	  new Ball{Vector2f{1168.5,413},I,Col::STRIPES},
 	  new Ball{Vector2f{1168.5,452},I,Col::SOLIDS},
 	  new Ball{Vector2f{1168.5,491},I,Col::STRIPES}},
+=======
+   Balls{ new Ball{Vector2f{403.5,413},I,Col::WHITE,Id::B0},
+          new Ball{Vector2f{1028.5,413},I,Col::STRIPES,Id::B9},
+	        new Ball{Vector2f{1062.5,393},I,Col::STRIPES,Id::B12},
+	        new Ball{Vector2f{1062.5,433},I,Col::SOLIDS,Id::B7},
+	        new Ball{Vector2f{1096.5,374},I,Col::SOLIDS,Id::B1},
+	        new Ball{Vector2f{1096.5,413},I,Col::BLACK,Id::B8},
+	        new Ball{Vector2f{1096.5,452},I,Col::STRIPES,Id::B15},
+	        new Ball{Vector2f{1132.5,354},I,Col::STRIPES,Id::B14},
+	        new Ball{Vector2f{1132.5,393},I,Col::SOLIDS,Id::B3},
+	        new Ball{Vector2f{1132.5,433},I,Col::STRIPES,Id::B10},
+	        new Ball{Vector2f{1132.5,472},I,Col::SOLIDS,Id::B6},
+	        new Ball{Vector2f{1168.5,335},I,Col::SOLIDS,Id::B5},
+	        new Ball{Vector2f{1168.5,374},I,Col::SOLIDS,Id::B4},
+	        new Ball{Vector2f{1168.5,413},I,Col::STRIPES,Id::B13},
+	        new Ball{Vector2f{1168.5,452},I,Col::SOLIDS,Id::B2},
+	        new Ball{Vector2f{1168.5,491},I,Col::STRIPES,Id::B11}},
+>>>>>>> 8426d0d2d2a3aa58b5c3b08b0f4238b274fbe35c
    W_ball{*std::find_if(Balls.begin(),Balls.end(),[](auto const& b){
 	 return b->color == Col::WHITE;
        })},
@@ -158,12 +177,12 @@ void Game_State :: handleCollisions(std::vector<Ball*> & b, Wall* W, Hole* h)
       {
         firstBallIHole = true;
         ballInHole.push_back((*i)->color);
-        std::cout << ballInHole.at(0) << '\n';
+        //std::cout << ballInHole.at(0) << '\n';
       }
       if((*i)->color != Col::WHITE && firstBallIHole)
       {
         ballInHole.push_back((*i)->color);
-        std::cout << ballInHole.at(0) << '\n';
+        //std::cout << ballInHole.at(0) << '\n';
       }
       if((*i)->color == Col::WHITE)
       {
@@ -179,7 +198,7 @@ void Game_State :: handleCollisions(std::vector<Ball*> & b, Wall* W, Hole* h)
         {
           firstTouch = true;
           firstTouchCol = (*j)->color;
-          std::cout << firstTouchCol << '\n';
+          //std::cout << firstTouchCol << '\n';
         }
       }
     }

@@ -32,11 +32,11 @@ public:
   sf::Texture Play_Btn;
   sf::Texture Play_Btn2;
   sf::Texture GameOver;
-  sf::Texture ball_8; 
+  sf::Texture ball_8;
 
   int case_solids{0};
   int case_stripes{0};
-  
+
   sf::SoundBuffer collideBuffer;
   sf::SoundBuffer holeBuffer;
   sf::SoundBuffer strikeBuffer;
@@ -45,10 +45,10 @@ public:
   sf::Font font;
 
   Item();
-  sf::Texture loadTexture(std::string const& s);
-  sf::SoundBuffer loadSoundBuffer (std::string const& a);
-  sf::Font loadFont(std::string const& s);
-  sf::Texture const& getBallTextureByColor(Col C);
+  sf::Texture loadTexture(std::string const&);
+  sf::SoundBuffer loadSoundBuffer (std::string const&);
+  sf::Font loadFont(std::string const&);
+  sf::Texture const& getBallTexture(Col, Id);
 };
 
 #endif

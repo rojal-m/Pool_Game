@@ -10,8 +10,8 @@
 using namespace sf;
 using namespace std;
 
-Ball::Ball(Vector2f const& Pos, Item & I, Col c)
-  :ball{I.getBallTextureByColor(c)}, collide{I.collideBuffer}, hole{I.holeBuffer}, side{I.sideBuffer}, position{Pos},  velocity{0,0}, moving{false}, color{c}, visible{true}
+Ball::Ball(Vector2f const& Pos, Item & I, Col c, Id i)
+  :ball{I.getBallTexture(c,i)}, collide{I.collideBuffer}, hole{I.holeBuffer}, side{I.sideBuffer}, position{Pos},  velocity{0,0}, moving{false}, color{c}, id{i}, visible{true}
 {
   auto a = ball.getGlobalBounds();
   ball.setOrigin(a.width/2,a.height/2);

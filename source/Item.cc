@@ -64,59 +64,49 @@ Font Item::loadFont(std::string const& s)
 
   return F;
 }
-Texture const& Item::getBallTextureByColor(Col C)
+Texture const& Item::getBallTexture(Col C, Id I)
 {
   switch(C)
   {
   case Col::SOLIDS:
-    switch(case_solids++)
+    switch(I)
     {
-    case 0:
-      //case_solids++;
-      return B7;
-    case 1:
-      //case_solids++;
+    case Id::B1:
       return B1;
-    case 2:
-      //case_solids++;
-      return B3;
-    case 3:
-      //case_solids++;
-      return B6;
-    case 4:
-      //case_solids++;
-      return B5;
-    case 5:
-      //case_solids++;
-      return B4;
-    case 6:
-      case_solids = 0;
+    case Id::B2:
       return B2;
+    case Id::B3:
+      return B3;
+    case Id::B4:
+      return B4;
+    case Id::B5:
+      return B5;
+    case Id::B6:
+      return B6;
+    case Id::B7:
+      return B7;
+    default:
+      break;
     }
   case Col::STRIPES:
-    switch(case_stripes++)
+    switch(I)
     {
-    case 0:
-      //case_stripes++;
-      return B9;
-    case 1:
-      //case_stripes++;
-      return B12;
-    case 2:
-      //case_stripes++;
-      return B15;
-    case 3:
-      //case_stripes++;
-      return B14;
-    case 4:
-      //case_stripes++;
-      return B10;
-    case 5:
-      //case_stripes++;
-      return B13;
-    case 6:
-      case_stripes = 0;
-      return B11;
+      case Id::B9:
+        return B9;
+      case Id::B10:
+        return B10;
+      case Id::B11:
+        return B11;
+      case Id::B12:
+        return B12;
+      case Id::B13:
+        return B13;
+      case Id::B14:
+        return B14;
+      case Id::B15:
+        return B15;
+      default:
+        break;
     }
   case Col::BLACK:
     return B_B;
