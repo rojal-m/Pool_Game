@@ -7,18 +7,18 @@
 class Stick
 {
 private:
-  sf::Sprite stick;
+  sf::Sprite stick{};
   sf::Vector2f position;
   float rotation;
   Ball & Wball;
-  sf::Sound strike;
+  sf::Sound strike{};
 
 public:
   bool shot;
   float power;
   bool visible{true};
 
-  Stick(Item const&,Ball &);
+  Stick(Ball &);
   void update();
   void draw(sf::RenderWindow &);
   void updateRotation(sf::Vector2f &);

@@ -1,4 +1,5 @@
 #include <vector>
+#include <string>
 #include "State.h"
 #include "Item.h"
 #include "Ball.h"
@@ -7,11 +8,13 @@
 #include "Hole.h"
 #include "Player.h"
 
+std::string const fileName{"positions_9ball.txt"};
+
 class Game_State_2 : public State
 {
 private:
-  sf::Sprite bg;
-  sf::Sprite GameOver;
+  sf::Sprite bg{};
+  sf::Sprite GameOver{};
 
   std::vector<Ball*> Balls;
   Ball * W_ball;
@@ -37,7 +40,7 @@ private:
   void cleanup ();
 
 public:
-  Game_State_2 (Item &);
+  Game_State_2();
   ~Game_State_2();
   Game_State_2 (const Game_State_2&) = default;
   Game_State_2 operator=(const Game_State_2&);

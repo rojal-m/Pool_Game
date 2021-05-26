@@ -1,11 +1,12 @@
 #include "Player.h"
 #include "Stick.h"
 
+
 using namespace std;
 using namespace sf;
 
-Player::Player(string const& N,Font & F,bool B)
-  :turn{B}, name{N,F,30} ,font{F} , tur{"turn",F,30}
+Player::Player(string const& N, bool B)
+  :turn{B}, name{N,font,30} , tur{"turn",font,30}
 {
   name.setPosition(100,840);
   tur.setPosition(200,840);

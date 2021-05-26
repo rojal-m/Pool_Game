@@ -1,18 +1,28 @@
-#include <iostream>
+template <typename T>
+std::map<std::string, T> SourceManager<T>::resources{};
 
 template <typename T>
-T & SourceManager<T>::load (const std::string & file)
+T& SourceManager<T>::load(std::string const & f)
 {
-    auto it { sources_map.find(file) };
-    if ( it == sources_map.end () )
     {
-        std::unique_ptr<T> tmp { std::make_unique<T> () };
-        if ( !tmp -> loadFromFile (file) )
-	       throw std::logic_error { "Error loading file"};
-         it = sources_map.insert (std::make_pair (file, std::move(tmp))).first;
+        auto it {resources.find(f)};
+        if (it == end(resources))
+        {
+            T res{loadFromFile(f)};
+            it = resources.insert(make_pair(f, res)).first;
+        }
+        return it->second;
     }
-    return *(it->second);
 }
 
 template <typename T>
-std::unordered_map<std::string, std::unique_ptr<T>> SourceManager<T>::sources_map { };
+T SourceManager<T>:: loadFromFile(std::string const & f)
+{
+    T item;
+    if (!item.loadFromFile(f))
+    {
+        throw std::logic_error{"Failed to open file"};
+    }
+
+    return item;
+}

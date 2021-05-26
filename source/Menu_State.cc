@@ -2,19 +2,28 @@
 #include <stdexcept>
 #include <iostream>
 #include "Menu_State.h"
+#include "SourceManager.h"
 
 using namespace sf;
 
-Menu_State :: Menu_State (Item & I)
-  :bg{I.ball_8}, bg1{I.Menu_Bg}, instruct{I.Controls}, btn1{I.Play_Btn}, btn2{I.Play_Btn2}, play { false }
+Menu_State :: Menu_State ()
+  :play { false }
 {
+  bg.setTexture(SourceManager<Texture>::load("item/image/8ball.png"));
   bg.setScale(0.45f,0.45f);
   bg.setPosition(1000.f,100.f);
+  bg1.setTexture(SourceManager<Texture>::load("item/image/Menu-01.png"));
+
+  instruct.setTexture(SourceManager<Texture>::load("item/image/Controls-01.png"));
   instruct.setPosition(1000.f,400.f);
+
+  btn1.setTexture(SourceManager<Texture>::load("item/image/Play_Btn1.png"));
   btn1.setOrigin(btn1.getLocalBounds().width/2, btn1.getLocalBounds().height/2);
   btn1.setPosition(450.f,420.f);
+  btn2.setTexture(SourceManager<Texture>::load("item/image/Play_Btn2.png"));
   btn2.setOrigin(btn2.getLocalBounds().width/2, btn2.getLocalBounds().height/2);
   btn2.setPosition(450.f,675.f);
+
 }
 
 void Menu_State::handle_event(sf::Event & event)

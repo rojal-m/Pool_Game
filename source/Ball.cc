@@ -4,18 +4,18 @@
 #include <cmath>
 #include <iterator>
 #include <algorithm>
+#include <fstream>
 #include <utility>
 #include "Ball.h"
+#include "SourceManager.h"
+
 
 using namespace sf;
 using namespace std;
 
-Ball::Ball(Vector2f const& Pos, Item & I, Col c, Id i)
-  :ball{I.getBallTexture(c,i)}, collide{I.collideBuffer}, hole{I.holeBuffer}, side{I.sideBuffer}, position{Pos},  velocity{0,0}, moving{false}, color{c}, id{i}, visible{true}
-{
-  auto a = ball.getGlobalBounds();
-  ball.setOrigin(a.width/2,a.height/2);
-}
+Ball::Ball()
+  :velocity{0,0}, moving{false}, visible{true}
+{}
 
 void Ball::update()
 {
@@ -69,6 +69,12 @@ bool Ball::handleBallInHole(Hole const& h)
   return true;
 }
 
+void Ball::onShoot(float&p,float r)
+{
+  velocity.x = p * cos((r*pi)/180);
+  velocity.y = p * sin((r*pi)/180);
+  moving = true;
+}
 
 bool Ball::collideWith(Ball & B)
 {
@@ -154,4 +160,56 @@ bool Ball::collideWith(Wall & w)
   }
   else
   {return false;}
+}
+
+
+void Ball::load_data(std::string const & file_name, Id i)
+{
+  string textureFileName;
+  ifstream file("item/ExternalSource/"+file_name);
+  string trash{};
+  int x;
+  getline(file,trash);
+  while(file >> x >> position.x >>  position.y >> textureFileName)
+  {
+    if( x == i)
+    {
+      if (i == 1)
+      break;
+    }
+  }
+
+  ball.setTexture(SourceManager<Texture>::load("item/image/"+textureFileName));
+  auto a = ball.getGlobalBounds();
+  ball.setOrigin(a.width/2,a.height/2);
+  collide.setBuffer(SourceManager<SoundBuffer>::load("item/Music/Collide.wav"));
+  hole.setBuffer(SourceManager<SoundBuffer>::load("item/Music/Hole.wav"));
+  side.setBuffer(SourceManager<SoundBuffer>::load("item/Music/Side.wav"));
+
+  file.close();
+}
+
+
+W_Ball::W_Ball(std::string const & s, Id i)
+: Ball{}
+{
+  load_data(s, i);
+}
+
+B_Ball::B_Ball(std::string const & s, Id i)
+: Ball{}
+{
+  load_data(s, i);
+}
+
+Stripes::Stripes(std::string const & s, Id i)
+:Ball{}
+{
+  load_data(s, i);
+}
+
+Solids::Solids(std::string const & s, Id i)
+:Ball{}
+{
+  load_data(s, i);
 }

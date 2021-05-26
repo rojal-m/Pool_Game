@@ -6,34 +6,35 @@
 using namespace sf;
 using namespace std;
 
-Game_State_2 :: Game_State_2 (Item & I)
-  :bg{I.Game_Bg},
-   GameOver{I.GameOver},
-   Balls{ new Ball{Vector2f{403.5,413},I,Col::WHITE,Id::B0},
-          new Ball{Vector2f{1028.5,413},I,Col::SOLIDS,Id::B1},
-	        new Ball{Vector2f{1062.5,393},I,Col::SOLIDS,Id::B3},
-	        new Ball{Vector2f{1062.5,433},I,Col::SOLIDS,Id::B2},
-	        new Ball{Vector2f{1096.5,374},I,Col::SOLIDS,Id::B5},
-	        new Ball{Vector2f{1096.5,413},I,Col::STRIPES,Id::B9},
-	        new Ball{Vector2f{1096.5,452},I,Col::SOLIDS,Id::B4},
-	        new Ball{Vector2f{1132.5,393},I,Col::SOLIDS,Id::B7},
-	        new Ball{Vector2f{1132.5,433},I,Col::SOLIDS,Id::B6},
-	        new Ball{Vector2f{1168.5,413},I,Col::BLACK,Id::B8}},
+Game_State_2 :: Game_State_2()
+  :Balls{ new W_Ball{fileName, Id::B0},
+          new Solids{fileName, Id::B1},
+	        new Solids{fileName, Id::B3},
+	        new Solids{fileName, Id::B2},
+	        new Solids{fileName, Id::B5},
+	        new Stripes{fileName, Id::B9},
+	        new Solids{fileName, Id::B4},
+	        new Solids{fileName, Id::B7},
+	        new Solids{fileName, Id::B6},
+	        new B_Ball{fileName, Id::B8}},
 
    W_ball{*std::find_if(Balls.begin(),Balls.end(),[](auto const& b){
 	 return b->color == Col::WHITE;
        })},
-   stick{new Stick{I, *W_ball}},
+   stick{new Stick{*W_ball}},
    wall{new Wall{}},
    hole{new Hole{}},
-   p1{"Player1",I.font,true},
-   p2{"Player2",I.font,false}
+   p1{"Player1",true},
+   p2{"Player2",false}
 {
   std::for_each(Balls.begin(),Balls.end(), [this](Ball * B){
         if(B->id != Id::B0)
         ballOnBoard.push_back(B->id);
     });
   std::sort(ballOnBoard.begin(), ballOnBoard.end());
+
+  bg.setTexture(SourceManager<Texture>::load("item/image/background-01.png"));
+  GameOver.setTexture(SourceManager<Texture>::load("item/image/Game_Over.png"));
   GameOver.setOrigin(GameOver.getLocalBounds().width/2,GameOver.getLocalBounds().height/2);
   GameOver.setPosition(-1000,-1000);
 }

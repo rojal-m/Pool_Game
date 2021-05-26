@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <math.h>
+#include <string>
 #include "constants.h"
 #include "Item.h"
 #include "Hole.h"
@@ -9,27 +10,30 @@
 
 class Ball
 {
-private:
-  sf::Sprite ball;
-  sf::Sound collide;
-  sf::Sound hole;
-  sf::Sound side;
+protected:
+  sf::Sprite ball{};
+  sf::Sound collide{};
+  sf::Sound hole{};
+  sf::Sound side{};
 
 public:
-  sf::Vector2f position;
+  sf::Vector2f position{};
   sf::Vector2f velocity;
   bool moving;
-  Col color;
-  Id id;
+  Col color{};
+  Id id{};
   bool visible;
   bool ballInHand{false};
 
-  Ball(sf::Vector2f const&, Item &, Col , Id);
+  Ball();
   void update();
   void draw(sf::RenderWindow &);
   bool handleBallInHole(Hole const&);
+  void onShoot(float &, float);
   bool collideWith(Ball &);
   bool collideWith(Wall &);
+  void load_data(std::string const &, Id);
+
 private:
   template<typename T>
   float dot(sf::Vector2<T> const& Left, sf::Vector2<T> const& Right)
@@ -48,5 +52,33 @@ private:
   {
     return length(Left - Right);
   }
+
+};
+
+class W_Ball : public Ball
+{
+public:
+  W_Ball(std::string const &, Id);
+
+};
+
+class B_Ball : public Ball
+{
+public:
+  B_Ball(std::string const &, Id);
+
+};
+
+class Stripes : public Ball
+{
+public:
+  Stripes(std::string const &, Id);
+
+};
+
+class Solids : public Ball
+{
+public:
+  Solids(std::string const &, Id);
 
 };

@@ -10,15 +10,13 @@ using namespace sf;
 
 Game :: Game (std::string const & title,
               unsigned            width,
-              unsigned            height,
-	      Item & I)
+              unsigned            height)
   : window { VideoMode { width, height },
     title, Style::Titlebar | Style::Close },
     current_state{ MENU_STATE },
-    running { true },
-    _item{I}
+    running { true }
 {
-    states.insert(std::pair<int,  std::unique_ptr<State>>({MENU_STATE, std::make_unique<Menu_State>(_item)}));
+    states.insert(std::pair<int,  std::unique_ptr<State>>({MENU_STATE, std::make_unique<Menu_State>()}));
 }
 
 
@@ -68,10 +66,10 @@ void Game :: handle_state()
 {
   if (current_state == GAME_STATE)
   {
-    states.insert(std::pair<int,  std::unique_ptr<State>>({GAME_STATE, std::make_unique<Game_State>(_item)}));
+    states.insert(std::pair<int,  std::unique_ptr<State>>({GAME_STATE, std::make_unique<Game_State>()}));
   }
   if (current_state == GAME_STATE_2)
   {
-    states.insert(std::pair<int,  std::unique_ptr<State>>({GAME_STATE_2,  std::make_unique<Game_State_2>(_item)}));
+    states.insert(std::pair<int,  std::unique_ptr<State>>({GAME_STATE_2,  std::make_unique<Game_State_2>()}));
   }
 }

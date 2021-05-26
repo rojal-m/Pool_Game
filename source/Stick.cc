@@ -3,15 +3,19 @@
 #include <stdexcept>
 #include <math.h>
 #include "Stick.h"
+#include "SourceManager.h"
 
 using namespace sf;
 using namespace std;
 
-Stick::Stick(Item const& I ,Ball & w)
-  :stick{I.Stick}, position{}, rotation {0}, Wball{w}, strike{I.strikeBuffer}, shot{false}, power{0}
+Stick::Stick(Ball & w)
+  : position{}, rotation {0}, Wball{w}, shot{false}, power{0}
 {
+  stick.setTexture(SourceManager<Texture>::load("item/image/stick.png"));
   stick.setOrigin(970,11);
   position = Wball.position;
+
+  strike.setBuffer(SourceManager<SoundBuffer>::load("item/Music/strike.wav"));
 }
 
 void Stick::update()

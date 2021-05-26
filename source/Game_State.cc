@@ -1,63 +1,49 @@
 #include <string>
 #include <stdexcept>
 #include "Game_State.h"
+#include "SourceManager.h"
 #include <iostream>
+#include <fstream>
+#include <string>
 
 using namespace sf;
 using namespace std;
 
-Game_State :: Game_State (Item & I)
-  :bg{I.Game_Bg},
-   GameOver{I.GameOver},
-<<<<<<< HEAD
-   Balls{new Ball{Vector2f{403.5,413},I,Col::WHITE},
-          new Ball{Vector2f{1028.5,413},I,Col::STRIPES},
-	  new Ball{Vector2f{1062.5,393},I,Col::STRIPES},
-	  new Ball{Vector2f{1062.5,433},I,Col::SOLIDS},
-	  new Ball{Vector2f{1096.5,374},I,Col::SOLIDS},
-	  new Ball{Vector2f{1096.5,413},I,Col::BLACK},
-	  new Ball{Vector2f{1096.5,452},I,Col::STRIPES},
-	  new Ball{Vector2f{1132.5,354},I,Col::STRIPES},
-	  new Ball{Vector2f{1132.5,393},I,Col::SOLIDS},
-	  new Ball{Vector2f{1132.5,433},I,Col::STRIPES},
-	  new Ball{Vector2f{1132.5,472},I,Col::SOLIDS},
-	  new Ball{Vector2f{1168.5,335},I,Col::SOLIDS},
-	  new Ball{Vector2f{1168.5,374},I,Col::SOLIDS},
-	  new Ball{Vector2f{1168.5,413},I,Col::STRIPES},
-	  new Ball{Vector2f{1168.5,452},I,Col::SOLIDS},
-	  new Ball{Vector2f{1168.5,491},I,Col::STRIPES}},
-=======
-   Balls{ new Ball{Vector2f{403.5,413},I,Col::WHITE,Id::B0},
-          new Ball{Vector2f{1028.5,413},I,Col::STRIPES,Id::B9},
-	        new Ball{Vector2f{1062.5,393},I,Col::STRIPES,Id::B12},
-	        new Ball{Vector2f{1062.5,433},I,Col::SOLIDS,Id::B7},
-	        new Ball{Vector2f{1096.5,374},I,Col::SOLIDS,Id::B1},
-	        new Ball{Vector2f{1096.5,413},I,Col::BLACK,Id::B8},
-	        new Ball{Vector2f{1096.5,452},I,Col::STRIPES,Id::B15},
-	        new Ball{Vector2f{1132.5,354},I,Col::STRIPES,Id::B14},
-	        new Ball{Vector2f{1132.5,393},I,Col::SOLIDS,Id::B3},
-	        new Ball{Vector2f{1132.5,433},I,Col::STRIPES,Id::B10},
-	        new Ball{Vector2f{1132.5,472},I,Col::SOLIDS,Id::B6},
-	        new Ball{Vector2f{1168.5,335},I,Col::SOLIDS,Id::B5},
-	        new Ball{Vector2f{1168.5,374},I,Col::SOLIDS,Id::B4},
-	        new Ball{Vector2f{1168.5,413},I,Col::STRIPES,Id::B13},
-	        new Ball{Vector2f{1168.5,452},I,Col::SOLIDS,Id::B2},
-	        new Ball{Vector2f{1168.5,491},I,Col::STRIPES,Id::B11}},
->>>>>>> 8426d0d2d2a3aa58b5c3b08b0f4238b274fbe35c
+Game_State :: Game_State()
+  :Balls{new W_Ball{file_name, Id::B0},
+  new Solids{file_name, Id::B1},
+  new Solids{file_name, Id::B2},
+  new Solids{file_name, Id::B3},
+  new Solids{file_name, Id::B4},
+  new Solids{file_name, Id::B5},
+  new Solids{file_name, Id::B6},
+  new Solids{file_name, Id::B7},
+  new B_Ball{file_name, Id::B8},
+  new Stripes{file_name, Id::B9},
+  new Stripes{file_name, Id::B10},
+  new Stripes{file_name, Id::B11},
+  new Stripes{file_name, Id::B12},
+  new Stripes{file_name, Id::B13},
+  new Stripes{file_name, Id::B14},
+  new Stripes{file_name, Id::B15}},
+
    W_ball{*std::find_if(Balls.begin(),Balls.end(),[](auto const& b){
 	 return b->color == Col::WHITE;
        })},
    B_ball{*std::find_if(Balls.begin(),Balls.end(),[](auto const& b){
 	 return b->color == Col::BLACK;
        })},
-   stick{new Stick{I, *W_ball}},
+   stick{new Stick{*W_ball}},
    wall{new Wall{}},
    hole{new Hole{}},
-   p1{"Player1",I.font,true},
-   p2{"Player2",I.font,false}
+   p1{"Player1", true},
+   p2{"Player2", false}
 {
-  GameOver.setOrigin(GameOver.getLocalBounds().width/2,GameOver.getLocalBounds().height/2);
-  GameOver.setPosition(-1000,-1000);
+
+ bg.setTexture(SourceManager<Texture>::load("item/image/background-01.png"));
+ GameOver.setTexture(SourceManager<Texture>::load("item/image/Game_Over.png"));
+ GameOver.setOrigin(GameOver.getLocalBounds().width/2,GameOver.getLocalBounds().height/2);
+ GameOver.setPosition(-1000,-1000);
 }
 
 Game_State::~Game_State()

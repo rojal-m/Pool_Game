@@ -7,16 +7,18 @@
 #include "Hole.h"
 #include "Player.h"
 
+std::string const file_name{"positions_8ball.txt"};
+
 class Game_State : public State
 {
 private:
-  sf::Sprite bg;
-  sf::Sprite GameOver;
+  sf::Sprite bg{};
+  sf::Sprite GameOver{};
 
   std::vector<Ball*> Balls;
   Ball * W_ball;
   Ball * B_ball;
-  Stick * stick;
+  Stick* stick;
   Wall * wall;
   Hole * hole;
   Player p1;
@@ -37,7 +39,7 @@ private:
   void cleanup ();
 
 public:
-  Game_State (Item &);
+  Game_State ();
   ~Game_State();
   Game_State(const Game_State&) = default;
   Game_State operator=(const Game_State&);
