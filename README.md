@@ -5,7 +5,7 @@ The game stimulates a billiard table with a cue ball and "object balls". The cue
 
 **Keys**
 
-*“Enter”:Used to start the game
+*“Mouse”:Used to start the game
 
 *”W”: Used to increase shooting power
 
@@ -33,6 +33,7 @@ The game stimulates a billiard table with a cue ball and "object balls". The cue
  sudo apt install libsfml-dev 
 
 -To compile and run the code
- make 
+ make
+
 make run 
 
