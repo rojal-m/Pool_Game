@@ -8,24 +8,29 @@ class Stick
 {
 private:
   sf::Sprite stick{};
-  sf::Vector2f position;
+  sf::Sound strike{};
+  sf::Vector2f position{};
+  float max_power{};
+  float power_interval{};
+  float direction_interval{};
+  float power;
   float rotation;
   Ball & Wball;
-  sf::Sound strike{};
 
 public:
   bool shot;
-  float power;
-  bool visible{true};
+  bool visible;
 
   Stick(Ball &);
-  void update();
+  void update(sf::Vector2f &);
   void draw(sf::RenderWindow &);
   void updateRotation(sf::Vector2f &);
   void increasePower();
   void decreasePower();
+  bool hasPower();
   void shoot();
   void reposition();
+  void load_data(std::string const &);
 };
 
 #endif

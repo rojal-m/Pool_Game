@@ -1,6 +1,8 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <stdexcept>
+#include <random>
 #include <math.h>
 #include "Stick.h"
 #include "SourceManager.h"
@@ -9,31 +11,29 @@ using namespace sf;
 using namespace std;
 
 Stick::Stick(Ball & w)
-  : position{}, rotation {0}, Wball{w}, shot{false}, power{0}
+  :power{0}, rotation {0}, Wball{w}, shot{false}, visible{true}
 {
-  stick.setTexture(SourceManager<Texture>::load("item/image/stick.png"));
+  load_data("stick.txt");
   stick.setOrigin(970,11);
   position = Wball.position;
-
-  strike.setBuffer(SourceManager<SoundBuffer>::load("item/Music/strike.wav"));
 }
 
-void Stick::update()
+void Stick::update(Vector2f & m)
 {
+  if(shot)
+    visible = false;
+
   if (!visible)
     return;
-  if(shot)
-  {
-    position = Vector2f{-1000,-1000};
-    return;
-  }
+
+  updateRotation(m);
 }
 
 void Stick::draw(RenderWindow& w)
 {
   if (!visible)
     return;
-  //std::cout<<rotation;
+
   stick.setRotation(rotation);
   stick.setPosition(position);
   w.draw(stick);
@@ -41,8 +41,6 @@ void Stick::draw(RenderWindow& w)
 
 void Stick::updateRotation(Vector2f & v)
 {
-  if (!visible)
-    return;
   float opposite = v.y - position.y;
   float adjescent = v.x - position.x;
   if(opposite < 0 && adjescent < 0)
@@ -53,15 +51,13 @@ void Stick::updateRotation(Vector2f & v)
     rotation = 360+(180*atan(opposite/adjescent))/pi;
   if(opposite > 0 && adjescent > 0)
     rotation = (180*atan(opposite/adjescent))/pi;
-
-  //std::cout<<rotation<<"\n";
 }
 
 void Stick::increasePower()
 {
   if (!visible)
     return;
-  if(power > MAX_POWER)
+  if(power > max_power)
     return;
   power += 100;
   Vector2f v = stick.getOrigin();
@@ -81,11 +77,19 @@ void Stick::decreasePower()
   stick.setOrigin(v.x-5,v.y);
 }
 
+bool Stick::hasPower()
+{
+  return power != 0;
+}
+
 void Stick::shoot()
 {
-  if (!visible)
+  if (!visible || power == 0)
     return;
-  Wball.onShoot(power,rotation);
+  random_device rd{};
+  uniform_real_distribution<float> r_pow {power-power_interval, power+power_interval};
+  uniform_real_distribution<float> r_angle {rotation-direction_interval, rotation+direction_interval};
+  Wball.onShoot(r_pow(rd),r_angle(rd));
   power = 0;
   stick.setOrigin(950,11);
   shot = true;
@@ -99,4 +103,19 @@ void Stick::reposition()
   position = Wball.position;
   stick.setOrigin(970,11);
   shot = false;
+}
+void Stick::load_data(std::string const & file_name)
+{
+  ifstream file("item/ExternalSource/"+file_name);
+  string trash{};
+  getline(file,trash);
+  string textureFileName;
+  string soundFileName;
+
+  file >> power_interval >> direction_interval >> max_power >> textureFileName >> soundFileName;
+
+  stick.setTexture(SourceManager<Texture>::load("item/image/"+textureFileName));
+  strike.setBuffer(SourceManager<SoundBuffer>::load("item/Music/"+soundFileName));
+
+  file.close();
 }

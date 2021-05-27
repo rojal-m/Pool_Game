@@ -44,6 +44,7 @@ Game_State :: Game_State()
  GameOver.setTexture(SourceManager<Texture>::load("item/image/Game_Over.png"));
  GameOver.setOrigin(GameOver.getLocalBounds().width/2,GameOver.getLocalBounds().height/2);
  GameOver.setPosition(-1000,-1000);
+
 }
 
 Game_State::~Game_State()
@@ -67,28 +68,30 @@ void Game_State :: handle_event (Event & event)
     else if ( event.key.code == Keyboard::Key::Escape )
       end_game = true;
   }
+
   if(event.type == Event::MouseButtonPressed)
   {
     auto mouse{event.mouseButton};
     if(mouse.button == Mouse::Button::Left)
     {
-      if (W_ball->ballInHand)
+      if(!ballsMoving(Balls))
       {
-	       W_ball->ballInHand = false;
-	       stick->visible = true;
-	       stick->reposition();
+        if (W_ball->ballInHand)
+        {
+	        W_ball->ballInHand = false;
+	        stick->visible = true;
+	        stick->reposition();
+        }
+        else if(stick->hasPower())
+	        stick->shoot();
       }
-
-      else if(stick->power>0)
-	stick->shoot();
     }
   }
 }
 
 void Game_State :: update ()
 {
-  stick->update();
-  stick->updateRotation(m);
+  stick->update(m);
 
   handleCollisions(Balls,wall,hole);
 
@@ -98,6 +101,7 @@ void Game_State :: update ()
 
   if (!ballsMoving(Balls) && stick->shot)
   {
+    stick->visible = true;
     stick->reposition();
     if(p1.turn)
       gameLogic(p1,p2);
@@ -118,6 +122,7 @@ void Game_State :: update ()
 
 void Game_State :: render (RenderWindow & window)
 {
+
   m.x = Mouse::getPosition(window).x;
   m.y = Mouse::getPosition(window).y;
   window.draw(bg);
@@ -137,6 +142,7 @@ int Game_State :: get_next_state()
     end_game = false;
     return MENU_STATE;
   }
+
   return GAME_STATE;
 }
 
@@ -190,24 +196,11 @@ void Game_State :: handleCollisions(std::vector<Ball*> & b, Wall* W, Hole* h)
     }
   }
 }
-void Game_State :: cleanup ()
-{/*
-  for ( auto it { std::begin (Balls) }; it != std::end (Balls); )
-  {
-    // get the global bounds of our current ball
-    auto bounds { it -> bounds () };
-    // get a rectangle representing the screen
-    FloatRect screen { 0, 0, screen_width, screen_height };
-    if ( !screen.intersects (bounds) )
-      it = balls.erase (it);
-    else
-      ++it;
-      }*/
-}
 void Game_State :: gameLogic(Player & p1, Player & p2)
 {
   if(!firstTouch)
   {
+    takeTurn(p1,p2);
     W_ballInHand();
     return;
   }

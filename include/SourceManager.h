@@ -1,6 +1,7 @@
 #ifndef SOURCEMANAGER_H
 #define SOURCEMANAGER_H
 #include <map>
+#include <string>
 
 template <typename T>
 class SourceManager
@@ -10,7 +11,6 @@ private:
 public:
     static T loadFromFile(std::string const &);
     static T& load(std::string const &);
-
 };
 
 #include "../source/SourceManager.tcc"

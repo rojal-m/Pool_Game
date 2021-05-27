@@ -13,18 +13,16 @@
 using namespace sf;
 using namespace std;
 
-Ball::Ball()
-  :velocity{0,0}, moving{false}, visible{true}
+Ball::Ball(Id i, Col c)
+  :id{i}, color{c}, velocity{0,0}, moving{false}, visible{true}
 {}
 
 void Ball::update()
 {
   if(!visible)
     return;
-  //std::cout<<velocity.x<<" "<<velocity.y<<"\n";
-  position += velocity/delta;
 
-  //std::cout<<velocity.x<<" "<<(velocity.x /delta)<<" "<<velocity.y<<"\n";
+  position += velocity/delta;
   velocity =  velocity*FRICTION;
 
   if(length(velocity) < 10)
@@ -43,33 +41,9 @@ void Ball::draw(RenderWindow& w)
   w.draw(ball);
 }
 
-bool Ball::handleBallInHole(Hole const& h)
-{
-  if(!visible || ballInHand)
-    return false;
-  bool inHole{};
-  Vector2f pos{position};
-  std::for_each(h.position.begin(),h.position.end(),[&inHole,&h,&pos, this](auto const& p)
-    {
-      inHole += distFrom(pos,p) <= h.radius;
-    });
 
-  if(!inHole)
-  {
-    return false;
-  }
-  if(ballInHand)
-  {
-    return true;
-  }
-  visible = false;
-  moving = false;
 
-  hole.play();
-  return true;
-}
-
-void Ball::onShoot(float&p,float r)
+void Ball::onShoot(float p,float r)
 {
   velocity.x = p * cos((r*pi)/180);
   velocity.y = p * sin((r*pi)/180);
@@ -162,19 +136,43 @@ bool Ball::collideWith(Wall & w)
   {return false;}
 }
 
-
-void Ball::load_data(std::string const & file_name, Id i)
+bool Ball::handleBallInHole(Hole const& h)
 {
-  string textureFileName;
+  if(!visible || ballInHand)
+    return false;
+  bool inHole{};
+  Vector2f pos{position};
+  std::for_each(h.position.begin(),h.position.end(),[&inHole,&h,&pos, this](auto const& p)
+    {
+      inHole += distFrom(pos,p) <= h.radius;
+    });
+
+  if(!inHole)
+  {
+    return false;
+  }
+  if(ballInHand)
+  {
+    return true;
+  }
+  visible = false;
+  moving = false;
+
+  hole.play();
+  return true;
+}
+
+void Ball::load_data(std::string const & file_name)
+{
   ifstream file("item/ExternalSource/"+file_name);
   string trash{};
-  int x;
   getline(file,trash);
+  int x;
+  string textureFileName;
   while(file >> x >> position.x >>  position.y >> textureFileName)
   {
-    if( x == i)
+    if( x == id)
     {
-      if (i == 1)
       break;
     }
   }
@@ -191,25 +189,25 @@ void Ball::load_data(std::string const & file_name, Id i)
 
 
 W_Ball::W_Ball(std::string const & s, Id i)
-: Ball{}
+: Ball{i, Col::WHITE}
 {
-  load_data(s, i);
+  load_data(s);
 }
 
 B_Ball::B_Ball(std::string const & s, Id i)
-: Ball{}
+: Ball{i, Col::BLACK}
 {
-  load_data(s, i);
+  load_data(s);
 }
 
 Stripes::Stripes(std::string const & s, Id i)
-:Ball{}
+:Ball{i, Col::STRIPES}
 {
-  load_data(s, i);
+  load_data(s);
 }
 
 Solids::Solids(std::string const & s, Id i)
-:Ball{}
+:Ball{i, Col::SOLIDS}
 {
-  load_data(s, i);
+  load_data(s);
 }

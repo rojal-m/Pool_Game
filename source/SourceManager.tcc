@@ -21,7 +21,7 @@ T SourceManager<T>:: loadFromFile(std::string const & f)
     T item;
     if (!item.loadFromFile(f))
     {
-        throw std::logic_error{"Failed to open file"};
+      throw std::logic_error{"Failed to open file"};
     }
 
     return item;

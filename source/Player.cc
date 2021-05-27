@@ -6,7 +6,7 @@ using namespace std;
 using namespace sf;
 
 Player::Player(string const& N, bool B)
-  :turn{B}, name{N,font,30} , tur{"turn",font,30}
+  :turn{B}, font{SourceManager<sf::Font>::load("item/font/BebasNeue-Regular.ttf")}, name{N,font,30} , tur{"turn",font,30}
 {
   name.setPosition(100,840);
   tur.setPosition(200,840);
@@ -24,13 +24,13 @@ void Player::render(RenderWindow & window)
   if (assignBalls == Col::STRIPES)
   {
     sf::Text Ball {"Hit Stripes", font,30};
-    Ball.setPosition(500,840);
+    Ball.setPosition(300,840);
     window.draw(Ball);
   }
   if (assignBalls == Col::SOLIDS)
   {
     sf::Text Ball {"Hit Solids", font,30};
-    Ball.setPosition(500,840);
+    Ball.setPosition(300,840);
     window.draw(Ball);
   }
   window.draw(tur);

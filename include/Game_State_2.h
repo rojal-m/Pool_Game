@@ -1,7 +1,6 @@
 #include <vector>
 #include <string>
 #include "State.h"
-#include "Item.h"
 #include "Ball.h"
 #include "Stick.h"
 #include "Wall.h"
@@ -24,6 +23,7 @@ private:
   Player p1;
   Player p2;
   sf::Vector2f m{};
+  bool game_over{false};
   bool end_game{false};
 
   bool firstTouch{false};

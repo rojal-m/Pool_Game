@@ -32,7 +32,6 @@ Game_State_2 :: Game_State_2()
         ballOnBoard.push_back(B->id);
     });
   std::sort(ballOnBoard.begin(), ballOnBoard.end());
-
   bg.setTexture(SourceManager<Texture>::load("item/image/background-01.png"));
   GameOver.setTexture(SourceManager<Texture>::load("item/image/Game_Over.png"));
   GameOver.setOrigin(GameOver.getLocalBounds().width/2,GameOver.getLocalBounds().height/2);
@@ -72,38 +71,43 @@ void Game_State_2::handle_event (Event & event)
 	       stick->reposition();
       }
 
-      else if(stick->power>0)
-	stick->shoot();
+      else if(stick->hasPower())
+	     stick->shoot();
     }
   }
 }
 
 void Game_State_2:: update ()
 {
-  stick->update();
-  stick->updateRotation(m);
-
+  stick->update(m);
   handleCollisions(Balls,wall,hole);
 
   std::for_each(Balls.begin(),Balls.end(),[](Ball * B){
       B->update();
     });
 
-  if (!ballsMoving(Balls) && stick->shot)
-  {
-    stick->reposition();
-    if(p1.turn)
-      gameLogic(p1,p2);
-    else
-      gameLogic(p2,p1);
-    firstTouch = false;
-    ballInHole = false;
+    if (!ballsMoving(Balls) && stick->shot)
+    {
+      stick->visible = true;
+      stick->reposition();
+      if(p1.turn)
+        gameLogic(p1,p2);
+      else
+        gameLogic(p2,p1);
+      firstTouch = false;
+      ballInHole = false;
   }
 
   if (!W_ball->visible || W_ball->ballInHand){
     W_ballInHand();
   }
   if (ballOnBoard.size() == 0 ){
+    game_over = true;
+    GameOver.setPosition(screen_width/2,screen_height/2);
+    stick->visible = false;
+  }
+  else if (*ballOnBoard.rbegin() != Id::B9){
+    game_over = true;
     GameOver.setPosition(screen_width/2,screen_height/2);
     stick->visible = false;
   }
@@ -135,6 +139,8 @@ int Game_State_2 :: get_next_state()
 
 bool Game_State_2 :: ballsMoving(std::vector<Ball*> & b)
 {
+  if (game_over)
+    return false;
   bool ballsMoving{false};
   for(auto it{b.begin()};it != b.end(); ++it){
     if((*it)->moving)
@@ -148,17 +154,17 @@ bool Game_State_2 :: ballsMoving(std::vector<Ball*> & b)
 
 void Game_State_2 :: handleCollisions(std::vector<Ball*> & b, Wall* W, Hole* h)
 {
+  if(W_ball->ballInHand == true || game_over)
+    return;
   for(auto i{b.begin()};i != b.end(); ++i)
   {
     if((*i)->handleBallInHole(*h))
     {
-
       if((*i)->id != Id::B0)
       {
         ballInHole = true;
         auto it = std::find(ballOnBoard.begin(), ballOnBoard.end(), (*i)->id);
         ballOnBoard.erase(it);
-        //std::cout << ballOnBoard.at(0) << '\n';
         if(ballOnBoard.size() == 0 )
           return;
         continue;
@@ -177,67 +183,79 @@ void Game_State_2 :: handleCollisions(std::vector<Ball*> & b, Wall* W, Hole* h)
         {
           firstTouch = true;
           firstTouchId = (*j)->id;
-          //std::cout << firstTouchId << '\n';
         }
       }
     }
   }
 }
-void Game_State_2 :: cleanup ()
-{/*
-  for ( auto it { std::begin (Balls) }; it != std::end (Balls); )
-  {
-    // get the global bounds of our current ball
-    auto bounds { it -> bounds () };
-    // get a rectangle representing the screen
-    FloatRect screen { 0, 0, screen_width, screen_height };
-    if ( !screen.intersects (bounds) )
-      it = balls.erase (it);
-    else
-      ++it;
-      }*/
-}
 void Game_State_2::gameLogic(Player & p1, Player & p2)
 {
+  if (game_over)
+    return;
   if(!firstTouch)
   {
     takeTurn(p1,p2);
+    std::cout << 1  << '\n';
     W_ballInHand();
     return;
   }
-    if(ballOnBoard.at(0) == firstTouchId)
+  if(ballOnBoard.at(0) == firstTouchId)
+  {
+    if(ballInHole)
     {
-      if(ballInHole)
-      {
-        return;
-      }
-      else
-      {
-        takeTurn(p1,p2);
-        return;
-      }
+      return;
     }
     else
     {
-      if(ballInHole)
-      {
-        return;
-      }
-      else
-      {
+      takeTurn(p1,p2);
+      return;
+    }
+  }
+  else
+  {
+    if(ballInHole)
+    {
+      return;
+    }
+    else
+    {
       takeTurn(p1,p2);
       W_ballInHand();
       return;
     }
-    }
+  }
 }
 
 
 void Game_State_2::W_ballInHand()
 {
+  if (game_over)
+    return;
   W_ball->ballInHand = true;
   stick->visible = false;
   W_ball->visible = true;
   W_ball->position = m;
   W_ball->velocity = Vector2f{0.f,0.f};
+
+  if(W_ball->position.x<(wall->leftX+19))
+    W_ball->position.x = wall->leftX+19;
+
+  if(W_ball->position.x>(wall->rightX-19))
+    W_ball->position.x = wall->rightX-19;
+
+  if(W_ball->position.y<(wall->topY+19))
+    W_ball->position.y = wall->topY+19;
+
+  if(W_ball->position.y>(wall->bottomY-19))
+    W_ball->position.y = wall->bottomY-19;
+
+  bool inHole{};
+  for(auto const& p : hole->position)
+  {
+    inHole += W_ball->distFrom(W_ball->position,p) < hole->radius+19;
+  }
+  if(inHole)
+    W_ball->visible = false;
+  else
+    W_ball->visible = true;
 }

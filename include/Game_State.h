@@ -1,6 +1,5 @@
 #include <vector>
 #include "State.h"
-#include "Item.h"
 #include "Ball.h"
 #include "Stick.h"
 #include "Wall.h"

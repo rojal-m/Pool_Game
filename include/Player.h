@@ -22,10 +22,9 @@ public:
 
 
 private:
+  sf::Font & font;
   sf::Text name;
-  sf::Font & font{SourceManager<sf::Font>::load("item/font/BebasNeue-Regular.ttf")};
   sf::Text tur;
-  //Ball* currBall;
 };
 
 void takeTurn(Player &, Player &);

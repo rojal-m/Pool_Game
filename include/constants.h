@@ -5,9 +5,8 @@ int const screen_height { 890 };
 float const pi { 3.14159265359 };
 float const delta { 100 };
 float const BALL_DIAMETER { 36 };
-float const MAX_POWER { 2000 };
-float const FRICTION { 0.9895 };
-double const fps { 120.0 };
+float const FRICTION { 0.9845 };
+double const fps { 60.0 };
 
 enum Col
 {
