@@ -33,6 +33,8 @@ The game stimulates a billiard table with a cue ball and "object balls". The cue
  sudo apt install libsfml-dev 
 
 -To compile and run the code
+
+ 
  make
 
 make run 
