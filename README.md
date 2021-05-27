@@ -26,7 +26,7 @@ The game stimulates a billiard table with a cue ball and "object balls". The cue
 
 
 
-**Installation and Compiling **
+**Installation** **and** **Compiling**
 
 -The game needs SFML to be compiled
 
