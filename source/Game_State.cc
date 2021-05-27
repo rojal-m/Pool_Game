@@ -2,8 +2,6 @@
 #include <stdexcept>
 #include "Game_State.h"
 #include "SourceManager.h"
-#include <iostream>
-#include <fstream>
 #include <string>
 
 using namespace sf;
@@ -169,12 +167,10 @@ void Game_State :: handleCollisions(std::vector<Ball*> & b, Wall* W, Hole* h)
       {
         firstBallIHole = true;
         ballInHole.push_back((*i)->color);
-        //std::cout << ballInHole.at(0) << '\n';
       }
       if((*i)->color != Col::WHITE && firstBallIHole)
       {
         ballInHole.push_back((*i)->color);
-        //std::cout << ballInHole.at(0) << '\n';
       }
       if((*i)->color == Col::WHITE)
       {
@@ -190,7 +186,6 @@ void Game_State :: handleCollisions(std::vector<Ball*> & b, Wall* W, Hole* h)
         {
           firstTouch = true;
           firstTouchCol = (*j)->color;
-          //std::cout << firstTouchCol << '\n';
         }
       }
     }
@@ -256,4 +251,27 @@ void Game_State::W_ballInHand()
   W_ball->visible = true;
   W_ball->position = m;
   W_ball->velocity = Vector2f{0.f,0.f};
+
+
+  if(W_ball->position.x<(wall->leftX+19))
+  W_ball->position.x = wall->leftX+19;
+
+  if(W_ball->position.x>(wall->rightX-19))
+  W_ball->position.x = wall->rightX-19;
+
+  if(W_ball->position.y<(wall->topY+19))
+  W_ball->position.y = wall->topY+19;
+
+  if(W_ball->position.y>(wall->bottomY-19))
+  W_ball->position.y = wall->bottomY-19;
+
+  bool inHole{};
+  for(auto const& p : hole->position)
+  {
+    inHole += W_ball->distFrom(W_ball->position,p) < hole->radius+19;
+  }
+  if(inHole)
+  W_ball->visible = false;
+  else
+  W_ball->visible = true;
 }
