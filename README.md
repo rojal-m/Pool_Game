@@ -5,7 +5,7 @@ The game stimulates a billiard table with a cue ball and "object balls". The cue
 
 **Keys**
 
-*“Mouse”:Used to start the game
+*“Mouse”:Used to start the game, aim and shoot the white ball
 
 *”W”: Used to increase shooting power
 
