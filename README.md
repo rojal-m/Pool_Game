@@ -17,7 +17,7 @@ Mouse
 *Esc: Go back to Menu
 
 Visuals
-![Skärmavbild_2021-05-24_kl._12.29.07](/uploads/-/system/user/4882/de98ae0e35db4a775450f62bb1ff6064/Skärmavbild_2021-05-24_kl._12.29.07.png) 
+[](![Skärmavbild_2021-05-24_kl._12.29.07](/uploads/-/system/user/4882/de98ae0e35db4a775450f62bb1ff6064/Skärmavbild_2021-05-24_kl._12.29.07.png))
 
 Installation and Compiling 
 
