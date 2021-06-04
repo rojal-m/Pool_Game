@@ -94,7 +94,7 @@ void Game_State :: update ()
   }
 
   if (!W_ball->visible || W_ball->ballInHand){
-    W_ballInHand();
+    W_ball->InHand(m,wall,hole);
   }
   if (!B_ball->visible){
     GameOver.setPosition(screen_width/2,screen_height/2);
@@ -180,7 +180,7 @@ void Game_State :: gameLogic(Player & p1, Player & p2)
   if(!firstTouch)
   {
     takeTurn(p1,p2);
-    W_ballInHand();
+    W_ball->InHand(m,wall,hole);
     return;
   }
   if(p1.assigned)
@@ -200,7 +200,7 @@ void Game_State :: gameLogic(Player & p1, Player & p2)
     else
     {
       takeTurn(p1,p2);
-      W_ballInHand();
+      W_ball->InHand(m,wall,hole);
       return;
     }
   }
@@ -255,36 +255,4 @@ void Game_State::load_data()
       Balls.push_back(B_ball);
     }
   }
-}
-
-void Game_State::W_ballInHand()
-{
-  W_ball->ballInHand = true;
-  stick->visible = false;
-  W_ball->visible = true;
-  W_ball->position = m;
-  W_ball->velocity = Vector2f{0.f,0.f};
-
-
-  if(W_ball->position.x<(wall->leftX+19))
-  W_ball->position.x = wall->leftX+19;
-
-  if(W_ball->position.x>(wall->rightX-19))
-  W_ball->position.x = wall->rightX-19;
-
-  if(W_ball->position.y<(wall->topY+19))
-  W_ball->position.y = wall->topY+19;
-
-  if(W_ball->position.y>(wall->bottomY-19))
-  W_ball->position.y = wall->bottomY-19;
-
-  bool inHole{};
-  for(auto const& p : hole->position)
-  {
-    inHole += distFrom(W_ball->position,p) < hole->radius+19;
-  }
-  if(inHole)
-  W_ball->visible = false;
-  else
-  W_ball->visible = true;
 }

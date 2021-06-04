@@ -31,7 +31,7 @@ private:
   bool firstBallIHole{false};
   std::vector<Col> ballInHole{};
 
-  void W_ballInHand();
+  //void W_ballInHand();
   bool ballsMoving(std::vector<Ball*> &);
   void handleCollisions(std::vector<Ball*> &, Wall*, Hole*);
   void gameLogic(Player&,Player&);

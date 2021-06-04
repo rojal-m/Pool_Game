@@ -27,12 +27,12 @@ public:
   bool ballInHand{false};
 
 
-  Ball(float, float, Id, Col, float);
+  Ball(float, float, Id, float);
   virtual ~Ball () = default;
-  void update();
-  void draw(sf::RenderWindow &);
+  virtual void update();
+  virtual void draw(sf::RenderWindow &);
   bool handleBallInHole(Hole const&);
-  bool collideWith(Ball &);
+  virtual bool collideWith(Ball &);
   bool collideWith(Wall &);
   void load_data();
   virtual void onShoot(float, float);
@@ -61,6 +61,7 @@ class W_Ball : public Ball
 public:
   W_Ball(float, float, Id);
   void onShoot(float, float) override;
+  void InHand(sf::Vector2f&,Wall*,Hole*);
 };
 
 class B_Ball : public Ball
@@ -71,12 +72,15 @@ public:
 
 class Stripes : public Ball
 {
+  bool invis;
 public:
   Stripes(float, float, Id);
+  void draw(sf::RenderWindow&) override;
 };
 
 class Solids : public Ball
 {
 public:
   Solids(float, float, Id);
+  bool collideWith(Ball &) override;
 };

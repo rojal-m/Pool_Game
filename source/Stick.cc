@@ -19,7 +19,7 @@ Stick::Stick()
 
 void Stick::update(Vector2f & m)
 {
-  if(shot)
+  if(shot || Wball->ballInHand)
     visible = false;
 
   if (!visible)

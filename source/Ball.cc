@@ -13,9 +13,26 @@
 using namespace sf;
 using namespace std;
 
-Ball::Ball(float x, float y, Id i, Col c, float m)
-  :position{x,y}, id{i}, color{c}, mass{m}, velocity{0,0}, moving{false}, visible{true}
-{}
+Ball::Ball(float x, float y, Id i, float m)
+  :position{x,y}, id{i}, color{}, mass{m}, velocity{0,0}, moving{false}, visible{true}
+{
+  if(id == 0)
+  {
+    color = Col::WHITE;
+  }
+  else if(id >= 1 && id <= 7)
+  {
+    color = Col::SOLIDS;
+  }
+  else if(id >= 9 && id <= 15)
+  {
+    color = Col::STRIPES;
+  }
+  else if(id == 8)
+  {
+    color = Col::BLACK;
+  }
+}
 
 void Ball::update()
 {
@@ -186,8 +203,10 @@ void Ball::load_data()
 void Ball::onShoot([[maybe_unused]]float p,[[maybe_unused]]float r)
 {}
 
+
+//------------------------------------------------------------White Ball---------------------------------------------------------------
 W_Ball::W_Ball(float x, float y, Id i)
-: Ball{x, y, i, Col::WHITE, 0.2f}
+: Ball{x, y, i, 0.2f}
 {
   load_data();
 }
@@ -199,22 +218,113 @@ void W_Ball::onShoot(float p,float r)
   moving = true;
 }
 
+void W_Ball::InHand(sf::Vector2f& m,Wall* wall,Hole* hole)
+{
+  ballInHand = true;
+  visible = true;
+  position = m;
+  velocity = Vector2f{0.f,0.f};
+
+
+  if(position.x<(wall->leftX+19))
+  position.x = wall->leftX+19;
+
+  if(position.x>(wall->rightX-19))
+  position.x = wall->rightX-19;
+
+  if(position.y<(wall->topY+19))
+  position.y = wall->topY+19;
+
+  if(position.y>(wall->bottomY-19))
+  position.y = wall->bottomY-19;
+
+  bool inHole{};
+  for(auto const& p : hole->position)
+  {
+    inHole += distFrom(position,p) < hole->radius+19;
+  }
+  if(inHole)
+  visible = false;
+  else
+  visible = true;
+}
+
+
+//-----------------------------------------------------------------------Heavy Ball---------------------------------------
 B_Ball::B_Ball(float x, float y, Id i)
-: Ball{x, y, i, Col::BLACK, 3.f}
+: Ball{x, y, i, 3.f}
 {
   load_data();
 }
 
-
+//----------------------------------------------------------------------Invisi-Ball----------------------------------------
 Stripes::Stripes(float x, float y, Id i)
-:Ball{x, y, i, Col::STRIPES, 0.16f}
+:Ball{x, y, i, 0.16f}, invis{true}
 {
   load_data();
 }
-
-
+void Stripes::draw(RenderWindow& w)
+{
+  if(!visible || invis)
+    return;
+  ball.setPosition(position);
+  w.draw(ball);
+}
+//----------------------------------------------------------------------Ghost Ball-----------------------------------------
 Solids::Solids(float x, float y, Id i)
-:Ball{x, y, i, Col::SOLIDS, 0.16f}
+:Ball{x, y, i, 0.16f}
 {
   load_data();
+}
+bool Solids::collideWith(Ball & B)
+{
+  if(B.color != Col::WHITE)
+    return false;
+  if(!visible || !B.visible )
+    return false;
+  //find normal vector
+  const auto n{position - B.position};
+
+  //find distance
+  const auto dist{length(n)};
+  if(dist > BALL_DIAMETER)
+    return false;
+
+  if(ballInHand)
+    return true;
+
+  collide.play();
+
+
+  const auto mtd{n*((BALL_DIAMETER-dist)/dist)};
+  position = position + mtd*(0.5f);
+  B.position = B.position - mtd*(0.5f);
+
+  //find unit normal vector
+  const auto un{n*(1/length(n))};
+  //find unit tangent vector
+  const auto ut{Vector2f{-un.y,un.x}};
+  //Project velocity onto the unit normal and unit tangent vectors.
+  const auto v1t{dot(ut,velocity)};
+  const auto v1n{dot(un,velocity)};
+  const auto v2n{dot(un,B.velocity)};
+  const auto v2t{dot(ut,B.velocity)};
+
+
+  const auto v1nT{(v1n*(mass-B.mass)+v2n*(2*B.mass))/(mass+B.mass)};
+  const auto v1tT{v1t};
+  const auto v2nT{(v2n*(B.mass-mass)+v1n*(2*mass))/(mass+B.mass)};
+  const auto v2tT{v2t};
+
+  const auto v1nTag{un*v1nT};
+  const auto v1tTag{ut*v1tT};
+  const auto v2nTag{un*v2nT};
+  const auto v2tTag{ut*v2tT};
+
+  velocity = v1nTag + v1tTag;
+  B.velocity = v2nTag + v2tTag;
+
+  moving = true;
+  B.moving = true;
+  return true;
 }

@@ -90,7 +90,7 @@ void Game_State_2:: update ()
   }
 
   if (!W_ball->visible || W_ball->ballInHand){
-    W_ballInHand();
+    W_ball->InHand(m,wall,hole);
   }
   if (ballOnBoard.size() == 0 ){
     game_over = true;
@@ -187,7 +187,7 @@ void Game_State_2::gameLogic(Player & p1, Player & p2)
   {
     takeTurn(p1,p2);
     std::cout << 1  << '\n';
-    W_ballInHand();
+    W_ball->InHand(m,wall,hole);
     return;
   }
   if(ballOnBoard.at(0) == firstTouchId)
@@ -211,7 +211,7 @@ void Game_State_2::gameLogic(Player & p1, Player & p2)
     else
     {
       takeTurn(p1,p2);
-      W_ballInHand();
+      W_ball->InHand(m,wall,hole);
       return;
     }
   }
@@ -241,7 +241,7 @@ void Game_State_2::load_data()
     }
   }
 }
-
+/*
 void Game_State_2::W_ballInHand()
 {
   if (game_over)
@@ -273,4 +273,4 @@ void Game_State_2::W_ballInHand()
     W_ball->visible = false;
   else
     W_ball->visible = true;
-}
+}*/
