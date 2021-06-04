@@ -1,3 +1,4 @@
+#include <fstream>
 #include <string>
 #include <stdexcept>
 #include "Game_State_2.h"
@@ -7,26 +8,16 @@ using namespace sf;
 using namespace std;
 
 Game_State_2 :: Game_State_2()
-  :Balls{ new W_Ball{fileName, Id::B0},
-          new Solids{fileName, Id::B1},
-	        new Solids{fileName, Id::B3},
-	        new Solids{fileName, Id::B2},
-	        new Solids{fileName, Id::B5},
-	        new Stripes{fileName, Id::B9},
-	        new Solids{fileName, Id::B4},
-	        new Solids{fileName, Id::B7},
-	        new Solids{fileName, Id::B6},
-	        new B_Ball{fileName, Id::B8}},
-
-   W_ball{*std::find_if(Balls.begin(),Balls.end(),[](auto const& b){
-	 return b->color == Col::WHITE;
-       })},
-   stick{new Stick{*W_ball}},
+  :Balls{},
+   W_ball{},
+   stick{new Stick{}},
    wall{new Wall{}},
    hole{new Hole{}},
    p1{"Player1",true},
    p2{"Player2",false}
 {
+  load_data();
+  stick->referBall(W_ball);
   std::for_each(Balls.begin(),Balls.end(), [this](Ball * B){
         if(B->id != Id::B0)
         ballOnBoard.push_back(B->id);
@@ -226,6 +217,30 @@ void Game_State_2::gameLogic(Player & p1, Player & p2)
   }
 }
 
+void Game_State_2::load_data()
+{
+  ifstream file("item/ExternalSource/positions_9ball.txt");
+  string trash{};
+  getline(file,trash);
+  int id;
+  float x, y;
+  while(file >> id >> x >> y)
+  {
+    if(id == 0)
+    {
+      W_ball = new W_Ball{x,y,static_cast<Id>(id)};
+      Balls.push_back(W_ball);
+    }
+    else if(id >= 1 && id <= 8)
+    {
+      Balls.push_back(new Solids{x,y,static_cast<Id>(id)});
+    }
+    else if(id == 9)
+    {
+      Balls.push_back(new B_Ball{x,y,static_cast<Id>(id)});
+    }
+  }
+}
 
 void Game_State_2::W_ballInHand()
 {
@@ -252,7 +267,7 @@ void Game_State_2::W_ballInHand()
   bool inHole{};
   for(auto const& p : hole->position)
   {
-    inHole += W_ball->distFrom(W_ball->position,p) < hole->radius+19;
+    inHole += distFrom(W_ball->position,p) < hole->radius+19;
   }
   if(inHole)
     W_ball->visible = false;

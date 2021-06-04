@@ -17,64 +17,66 @@ protected:
   sf::Sound side{};
 
 public:
-  sf::Vector2f position{};
+  sf::Vector2f position;
   Id id;
   Col color;
+  float mass;
   sf::Vector2f velocity;
   bool moving;
   bool visible;
   bool ballInHand{false};
 
 
-  Ball(Id i, Col c);
+  Ball(float, float, Id, Col, float);
+  virtual ~Ball () = default;
   void update();
   void draw(sf::RenderWindow &);
   bool handleBallInHole(Hole const&);
-  void onShoot(float, float);
   bool collideWith(Ball &);
   bool collideWith(Wall &);
-  void load_data(std::string const &);
-
-
-  template<typename T>
-  float dot(sf::Vector2<T> const& Left, sf::Vector2<T> const& Right)
-  {
-    return Left.x * Right.x + Left.y * Right.y;
-  }
-
-  template<typename T>
-  float length(sf::Vector2<T> const& v)
-  {
-    return sqrt(powf(v.x,2)+powf(v.y,2));
-  }
-
-  template<typename T>
-  float distFrom(sf::Vector2<T> const& Left, sf::Vector2<T> const& Right)
-  {
-    return length(Left - Right);
-  }
+  void load_data();
+  virtual void onShoot(float, float);
 };
+
+template<typename T>
+float dot(sf::Vector2<T> const& Left, sf::Vector2<T> const& Right)
+{
+  return Left.x * Right.x + Left.y * Right.y;
+}
+
+template<typename T>
+float length(sf::Vector2<T> const& v)
+{
+  return sqrt(powf(v.x,2)+powf(v.y,2));
+}
+
+template<typename T>
+float distFrom(sf::Vector2<T> const& Left, sf::Vector2<T> const& Right)
+{
+  return length(Left - Right);
+}
 
 class W_Ball : public Ball
 {
 public:
-  W_Ball(std::string const &, Id);
+  W_Ball(float, float, Id);
+  void onShoot(float, float) override;
 };
 
 class B_Ball : public Ball
 {
 public:
-  B_Ball(std::string const &, Id);
+  B_Ball(float, float, Id);
 };
 
 class Stripes : public Ball
 {
 public:
-  Stripes(std::string const &, Id);
+  Stripes(float, float, Id);
 };
 
 class Solids : public Ball
 {
 public:
-  Solids(std::string const &, Id);
+  Solids(float, float, Id);
 };

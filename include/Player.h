@@ -11,9 +11,6 @@ class Player
 {
 public:
   Player(std::string const&, bool);
-  ~Player() = default;
-  Player(const Player&) = default;
-  Player& operator=(Player&) = default;
   void update();
   void render(sf::RenderWindow &);
   Col assignBalls{};

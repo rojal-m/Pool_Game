@@ -10,12 +10,11 @@
 using namespace sf;
 using namespace std;
 
-Stick::Stick(Ball & w)
-  :power{0}, rotation {0}, Wball{w}, shot{false}, visible{true}
+Stick::Stick()
+  :power{0}, rotation {0}, shot{false}, visible{true}
 {
   load_data("stick.txt");
   stick.setOrigin(970,11);
-  position = Wball.position;
 }
 
 void Stick::update(Vector2f & m)
@@ -89,7 +88,7 @@ void Stick::shoot()
   random_device rd{};
   uniform_real_distribution<float> r_pow {power-power_interval, power+power_interval};
   uniform_real_distribution<float> r_angle {rotation-direction_interval, rotation+direction_interval};
-  Wball.onShoot(r_pow(rd),r_angle(rd));
+  Wball->onShoot(r_pow(rd),r_angle(rd));
   power = 0;
   stick.setOrigin(950,11);
   shot = true;
@@ -100,9 +99,14 @@ void Stick::reposition()
 {
   if (!visible)
     return;
-  position = Wball.position;
+  position = Wball->position;
   stick.setOrigin(970,11);
   shot = false;
+}
+void Stick::referBall(W_Ball * B)
+{
+  Wball = B;
+  position = Wball->position;
 }
 void Stick::load_data(std::string const & file_name)
 {

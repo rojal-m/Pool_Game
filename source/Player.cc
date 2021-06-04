@@ -1,6 +1,6 @@
 #include "Player.h"
 #include "Stick.h"
-
+#include <iostream>
 
 using namespace std;
 using namespace sf;
@@ -13,9 +13,7 @@ Player::Player(string const& N, bool B)
 }
 
 void Player::update()
-{
-
-}
+{}
 
 void Player::render(RenderWindow & window)
 {

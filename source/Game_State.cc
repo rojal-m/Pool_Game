@@ -1,3 +1,5 @@
+#include <fstream>
+#include <iostream>
 #include <string>
 #include <stdexcept>
 #include "Game_State.h"
@@ -8,41 +10,23 @@ using namespace sf;
 using namespace std;
 
 Game_State :: Game_State()
-  :Balls{new W_Ball{file_name, Id::B0},
-  new Solids{file_name, Id::B1},
-  new Solids{file_name, Id::B2},
-  new Solids{file_name, Id::B3},
-  new Solids{file_name, Id::B4},
-  new Solids{file_name, Id::B5},
-  new Solids{file_name, Id::B6},
-  new Solids{file_name, Id::B7},
-  new B_Ball{file_name, Id::B8},
-  new Stripes{file_name, Id::B9},
-  new Stripes{file_name, Id::B10},
-  new Stripes{file_name, Id::B11},
-  new Stripes{file_name, Id::B12},
-  new Stripes{file_name, Id::B13},
-  new Stripes{file_name, Id::B14},
-  new Stripes{file_name, Id::B15}},
-
-   W_ball{*std::find_if(Balls.begin(),Balls.end(),[](auto const& b){
-	 return b->color == Col::WHITE;
-       })},
-   B_ball{*std::find_if(Balls.begin(),Balls.end(),[](auto const& b){
-	 return b->color == Col::BLACK;
-       })},
-   stick{new Stick{*W_ball}},
+  :Balls{},
+   W_ball{},
+   B_ball{},
+   stick{new Stick{}},
    wall{new Wall{}},
    hole{new Hole{}},
    p1{"Player1", true},
    p2{"Player2", false}
 {
-
- bg.setTexture(SourceManager<Texture>::load("item/image/background-01.png"));
- GameOver.setTexture(SourceManager<Texture>::load("item/image/Game_Over.png"));
- GameOver.setOrigin(GameOver.getLocalBounds().width/2,GameOver.getLocalBounds().height/2);
- GameOver.setPosition(-1000,-1000);
-
+  //std::cout << 0 << '\n';
+  load_data();
+  //std::cout << 1 << '\n';
+  stick->referBall(W_ball);
+  bg.setTexture(SourceManager<Texture>::load("item/image/background-01.png"));
+  GameOver.setTexture(SourceManager<Texture>::load("item/image/Game_Over.png"));
+  GameOver.setOrigin(GameOver.getLocalBounds().width/2,GameOver.getLocalBounds().height/2);
+  GameOver.setPosition(-1000,-1000);
 }
 
 Game_State::~Game_State()
@@ -243,6 +227,35 @@ void Game_State :: gameLogic(Player & p1, Player & p2)
     }
   }
 }
+void Game_State::load_data()
+{
+  ifstream file("item/ExternalSource/positions_8ball.txt");
+  string trash{};
+  getline(file,trash);
+  int id;
+  float x, y;
+  while(file >> id >> x >> y)
+  {
+    if(id == 0)
+    {
+      W_ball = new W_Ball{x,y,static_cast<Id>(id)};
+      Balls.push_back(W_ball);
+    }
+    else if(id >= 1 && id <= 7)
+    {
+      Balls.push_back(new Solids{x,y,static_cast<Id>(id)});
+    }
+    else if(id >= 9 && id <= 15)
+    {
+      Balls.push_back(new Stripes{x,y,static_cast<Id>(id)});
+    }
+    else if(id == 8)
+    {
+      B_ball = new B_Ball{x,y,static_cast<Id>(id)};
+      Balls.push_back(B_ball);
+    }
+  }
+}
 
 void Game_State::W_ballInHand()
 {
@@ -268,7 +281,7 @@ void Game_State::W_ballInHand()
   bool inHole{};
   for(auto const& p : hole->position)
   {
-    inHole += W_ball->distFrom(W_ball->position,p) < hole->radius+19;
+    inHole += distFrom(W_ball->position,p) < hole->radius+19;
   }
   if(inHole)
   W_ball->visible = false;

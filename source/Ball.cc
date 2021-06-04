@@ -1,4 +1,4 @@
-#include <iostream>
+
 #include <string>
 #include <stdexcept>
 #include <cmath>
@@ -13,8 +13,8 @@
 using namespace sf;
 using namespace std;
 
-Ball::Ball(Id i, Col c)
-  :id{i}, color{c}, velocity{0,0}, moving{false}, visible{true}
+Ball::Ball(float x, float y, Id i, Col c, float m)
+  :position{x,y}, id{i}, color{c}, mass{m}, velocity{0,0}, moving{false}, visible{true}
 {}
 
 void Ball::update()
@@ -25,7 +25,7 @@ void Ball::update()
   position += velocity/delta;
   velocity =  velocity*FRICTION;
 
-  if(length(velocity) < 10)
+  if(length(velocity) < 15)
   {
     velocity.x = 0;
     velocity.y = 0;
@@ -39,15 +39,6 @@ void Ball::draw(RenderWindow& w)
     return;
   ball.setPosition(position);
   w.draw(ball);
-}
-
-
-
-void Ball::onShoot(float p,float r)
-{
-  velocity.x = p * cos((r*pi)/180);
-  velocity.y = p * sin((r*pi)/180);
-  moving = true;
 }
 
 bool Ball::collideWith(Ball & B)
@@ -77,16 +68,21 @@ bool Ball::collideWith(Ball & B)
   //find unit tangent vector
   const auto ut{Vector2f{-un.y,un.x}};
   //Project velocity onto the unit normal and unit tangent vectors.
-  const auto v1n{dot(un,velocity)};
   const auto v1t{dot(ut,velocity)};
+  const auto v1n{dot(un,velocity)};
   const auto v2n{dot(un,B.velocity)};
   const auto v2t{dot(ut,B.velocity)};
 
 
-  const auto v1nTag{un*v2n};
-  const auto v1tTag{ut*v1t};
-  const auto v2nTag{un*v1n};
-  const auto v2tTag{ut*v2t};
+  const auto v1nT{(v1n*(mass-B.mass)+v2n*(2*B.mass))/(mass+B.mass)};
+  const auto v1tT{v1t};
+  const auto v2nT{(v2n*(B.mass-mass)+v1n*(2*mass))/(mass+B.mass)};
+  const auto v2tT{v2t};
+
+  const auto v1nTag{un*v1nT};
+  const auto v1tTag{ut*v1tT};
+  const auto v2nTag{un*v2nT};
+  const auto v2tTag{ut*v2tT};
 
   velocity = v1nTag + v1tTag;
   B.velocity = v2nTag + v2tTag;
@@ -162,52 +158,63 @@ bool Ball::handleBallInHole(Hole const& h)
   return true;
 }
 
-void Ball::load_data(std::string const & file_name)
+void Ball::load_data()
 {
-  ifstream file("item/ExternalSource/"+file_name);
+  ifstream file("item/ExternalSource/ball_sprite.txt");
   string trash{};
   getline(file,trash);
   int x;
   string textureFileName;
-  while(file >> x >> position.x >>  position.y >> textureFileName)
+  while(file >> x >> textureFileName)
   {
     if( x == id)
     {
       break;
     }
   }
-
-  ball.setTexture(SourceManager<Texture>::load("item/image/"+textureFileName));
+  Texture& T{SourceManager<Texture>::load("item/image/"+textureFileName)};
+  T.setSmooth(true);
+  ball.setTexture(T);
   auto a = ball.getGlobalBounds();
   ball.setOrigin(a.width/2,a.height/2);
   collide.setBuffer(SourceManager<SoundBuffer>::load("item/Music/Collide.wav"));
   hole.setBuffer(SourceManager<SoundBuffer>::load("item/Music/Hole.wav"));
   side.setBuffer(SourceManager<SoundBuffer>::load("item/Music/Side.wav"));
-
   file.close();
 }
 
+void Ball::onShoot([[maybe_unused]]float p,[[maybe_unused]]float r)
+{}
 
-W_Ball::W_Ball(std::string const & s, Id i)
-: Ball{i, Col::WHITE}
+W_Ball::W_Ball(float x, float y, Id i)
+: Ball{x, y, i, Col::WHITE, 0.2f}
 {
-  load_data(s);
+  load_data();
 }
 
-B_Ball::B_Ball(std::string const & s, Id i)
-: Ball{i, Col::BLACK}
+void W_Ball::onShoot(float p,float r)
 {
-  load_data(s);
+  velocity.x = p * cos((r*pi)/180);
+  velocity.y = p * sin((r*pi)/180);
+  moving = true;
 }
 
-Stripes::Stripes(std::string const & s, Id i)
-:Ball{i, Col::STRIPES}
+B_Ball::B_Ball(float x, float y, Id i)
+: Ball{x, y, i, Col::BLACK, 3.f}
 {
-  load_data(s);
+  load_data();
 }
 
-Solids::Solids(std::string const & s, Id i)
-:Ball{i, Col::SOLIDS}
+
+Stripes::Stripes(float x, float y, Id i)
+:Ball{x, y, i, Col::STRIPES, 0.16f}
 {
-  load_data(s);
+  load_data();
+}
+
+
+Solids::Solids(float x, float y, Id i)
+:Ball{x, y, i, Col::SOLIDS, 0.16f}
+{
+  load_data();
 }

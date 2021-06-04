@@ -15,13 +15,16 @@ private:
   float direction_interval{};
   float power;
   float rotation;
-  Ball & Wball;
+  W_Ball * Wball{};
 
 public:
   bool shot;
   bool visible;
 
-  Stick(Ball &);
+  Stick();
+  ~Stick() = default;
+  Stick(const Stick&) = default;
+  Stick& operator=(Stick&) = default;
   void update(sf::Vector2f &);
   void draw(sf::RenderWindow &);
   void updateRotation(sf::Vector2f &);
@@ -30,6 +33,7 @@ public:
   bool hasPower();
   void shoot();
   void reposition();
+  void referBall(W_Ball*);
   void load_data(std::string const &);
 };
 

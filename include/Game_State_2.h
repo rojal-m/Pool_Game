@@ -16,7 +16,7 @@ private:
   sf::Sprite GameOver{};
 
   std::vector<Ball*> Balls;
-  Ball * W_ball;
+  W_Ball * W_ball;
   Stick * stick;
   Wall * wall;
   Hole * hole;
@@ -37,7 +37,7 @@ private:
   bool ballsMoving(std::vector<Ball*> &);
   void handleCollisions(std::vector<Ball*> &, Wall*, Hole*);
   void gameLogic(Player&,Player&);
-  void cleanup ();
+  void load_data();
 
 public:
   Game_State_2();
