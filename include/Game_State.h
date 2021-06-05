@@ -1,4 +1,5 @@
 #include <vector>
+#include <map>
 #include "State.h"
 #include "Ball.h"
 #include "Stick.h"
@@ -16,7 +17,8 @@ private:
 
   std::vector<Ball*> Balls;
   W_Ball * W_ball;
-  B_Ball * B_ball;
+  Heavy * B_ball;
+  std::map<Col,InvisiBall*> Invisi_ball;
   Stick* stick;
   Wall * wall;
   Hole * hole;

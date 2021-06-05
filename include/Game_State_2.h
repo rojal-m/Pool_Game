@@ -17,6 +17,7 @@ private:
 
   std::vector<Ball*> Balls;
   W_Ball * W_ball;
+  InvisiBall * invisi_ball;
   Stick * stick;
   Wall * wall;
   Hole * hole;
@@ -32,8 +33,6 @@ private:
   std::vector<Id> ballOnBoard{};
   bool ballInHole{false};
 
-  //void ShootBall1();
-  //void W_ballInHand();
   bool ballsMoving(std::vector<Ball*> &);
   void handleCollisions(std::vector<Ball*> &, Wall*, Hole*);
   void gameLogic(Player&,Player&);

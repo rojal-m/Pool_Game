@@ -1,6 +1,7 @@
 #include <fstream>
 #include <string>
 #include <stdexcept>
+#include <random>
 #include "Game_State_2.h"
 #include <iostream>
 
@@ -10,6 +11,7 @@ using namespace std;
 Game_State_2 :: Game_State_2()
   :Balls{},
    W_ball{},
+   invisi_ball{},
    stick{new Stick{}},
    wall{new Wall{}},
    hole{new Hole{}},
@@ -77,16 +79,19 @@ void Game_State_2:: update ()
       B->update();
     });
 
-    if (!ballsMoving(Balls) && stick->shot)
-    {
-      stick->visible = true;
-      stick->reposition();
-      if(p1.turn)
-        gameLogic(p1,p2);
-      else
-        gameLogic(p2,p1);
-      firstTouch = false;
-      ballInHole = false;
+  if (ballOnBoard.size() < 8 )
+    invisi_ball->make_visible();
+
+  if (!ballsMoving(Balls) && stick->shot)
+  {
+    stick->visible = true;
+    stick->reposition();
+    if(p1.turn)
+      gameLogic(p1,p2);
+    else
+      gameLogic(p2,p1);
+    firstTouch = false;
+    ballInHole = false;
   }
 
   if (!W_ball->visible || W_ball->ballInHand){
@@ -186,7 +191,6 @@ void Game_State_2::gameLogic(Player & p1, Player & p2)
   if(!firstTouch)
   {
     takeTurn(p1,p2);
-    std::cout << 1  << '\n';
     W_ball->InHand(m,wall,hole);
     return;
   }
@@ -219,6 +223,14 @@ void Game_State_2::gameLogic(Player & p1, Player & p2)
 
 void Game_State_2::load_data()
 {
+  random_device rd{};
+  uniform_int_distribution rand{1, 8};
+  int Ghost{rand(rd)};
+  int Invis{0};
+  while(Invis == Ghost || Invis == 0)
+  {
+    Invis = rand(rd);
+  }
   ifstream file("item/ExternalSource/positions_9ball.txt");
   string trash{};
   getline(file,trash);
@@ -231,46 +243,22 @@ void Game_State_2::load_data()
       W_ball = new W_Ball{x,y,static_cast<Id>(id)};
       Balls.push_back(W_ball);
     }
-    else if(id >= 1 && id <= 8)
+    else if(id == Ghost)
     {
-      Balls.push_back(new Solids{x,y,static_cast<Id>(id)});
+      Balls.insert(Balls.begin(),new Ghost_Ball{x,y,static_cast<Id>(id)});
+    }
+    else if(id == Invis)
+    {
+      invisi_ball = new InvisiBall{x,y,static_cast<Id>(id)};
+      Balls.push_back(invisi_ball);
     }
     else if(id == 9)
     {
-      Balls.push_back(new B_Ball{x,y,static_cast<Id>(id)});
+      Balls.push_back(new Heavy{x,y,static_cast<Id>(id)});
+    }
+    else
+    {
+      Balls.push_back(new Normal{x,y,static_cast<Id>(id)});
     }
   }
 }
-/*
-void Game_State_2::W_ballInHand()
-{
-  if (game_over)
-    return;
-  W_ball->ballInHand = true;
-  stick->visible = false;
-  W_ball->visible = true;
-  W_ball->position = m;
-  W_ball->velocity = Vector2f{0.f,0.f};
-
-  if(W_ball->position.x<(wall->leftX+19))
-    W_ball->position.x = wall->leftX+19;
-
-  if(W_ball->position.x>(wall->rightX-19))
-    W_ball->position.x = wall->rightX-19;
-
-  if(W_ball->position.y<(wall->topY+19))
-    W_ball->position.y = wall->topY+19;
-
-  if(W_ball->position.y>(wall->bottomY-19))
-    W_ball->position.y = wall->bottomY-19;
-
-  bool inHole{};
-  for(auto const& p : hole->position)
-  {
-    inHole += distFrom(W_ball->position,p) < hole->radius+19;
-  }
-  if(inHole)
-    W_ball->visible = false;
-  else
-    W_ball->visible = true;
-}*/

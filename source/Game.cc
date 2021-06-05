@@ -63,11 +63,11 @@ void Game :: delay (sf::Clock & clock) const
 
 void Game :: handle_state()
 {
-  if (current_state == GAME_STATE)
+  if (current_state == GAME_STATE && states.size() == 1)
   {
     states.insert(std::pair<int,  std::unique_ptr<State>>({GAME_STATE, std::make_unique<Game_State>()}));
   }
-  if (current_state == GAME_STATE_2)
+  if (current_state == GAME_STATE_2 && states.size() == 1)
   {
     states.insert(std::pair<int,  std::unique_ptr<State>>({GAME_STATE_2,  std::make_unique<Game_State_2>()}));
   }

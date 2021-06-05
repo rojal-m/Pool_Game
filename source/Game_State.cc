@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
+#include <random>
 #include "Game_State.h"
 #include "SourceManager.h"
 #include <string>
@@ -13,15 +14,14 @@ Game_State :: Game_State()
   :Balls{},
    W_ball{},
    B_ball{},
+   Invisi_ball{},
    stick{new Stick{}},
    wall{new Wall{}},
    hole{new Hole{}},
    p1{"Player1", true},
    p2{"Player2", false}
 {
-  //std::cout << 0 << '\n';
   load_data();
-  //std::cout << 1 << '\n';
   stick->referBall(W_ball);
   bg.setTexture(SourceManager<Texture>::load("item/image/background-01.png"));
   GameOver.setTexture(SourceManager<Texture>::load("item/image/Game_Over.png"));
@@ -77,9 +77,24 @@ void Game_State :: update ()
 
   handleCollisions(Balls,wall,hole);
 
-  std::for_each(Balls.begin(),Balls.end(),[](Ball * B){
+  int solid_no{0};
+  int strip_no{0};
+  std::for_each(Balls.begin(),Balls.end(),[&solid_no,&strip_no](Ball * B){
       B->update();
+      if(B->visible)
+      {
+        if(B->color == Col::SOLIDS)
+          solid_no++;
+        if(B->color == Col::STRIPES)
+          strip_no++;
+      }
     });
+  if(solid_no < 7)
+    Invisi_ball.at(Col::SOLIDS)->make_visible();
+
+  if(strip_no < 7)
+    Invisi_ball.at(Col::STRIPES)->make_visible();
+
 
   if (!ballsMoving(Balls) && stick->shot)
   {
@@ -91,6 +106,25 @@ void Game_State :: update ()
       gameLogic(p2,p1);
     firstTouch = false;
     ballInHole.clear();
+
+    if(solid_no == 0)
+    {
+      if(p1.assignBalls == Col::SOLIDS)
+        p1.assignBalls = Col::BLACK;
+      if(p2.assignBalls == Col::SOLIDS)
+        p2.assignBalls = Col::BLACK;
+
+      B_ball->fixed_mass();
+    }
+    if(strip_no == 0)
+    {
+      if(p1.assignBalls == Col::STRIPES)
+        p1.assignBalls = Col::BLACK;
+      if(p2.assignBalls == Col::STRIPES)
+        p2.assignBalls = Col::BLACK;
+
+      B_ball->fixed_mass();
+    }
   }
 
   if (!W_ball->visible || W_ball->ballInHand){
@@ -229,6 +263,14 @@ void Game_State :: gameLogic(Player & p1, Player & p2)
 }
 void Game_State::load_data()
 {
+  random_device rd{};
+  uniform_int_distribution rand{1, 7};
+  int Ghost{rand(rd)};
+  int Invis{0};
+  while(Invis == Ghost || Invis == 0)
+  {
+    Invis = rand(rd);
+  }
   ifstream file("item/ExternalSource/positions_8ball.txt");
   string trash{};
   getline(file,trash);
@@ -241,18 +283,31 @@ void Game_State::load_data()
       W_ball = new W_Ball{x,y,static_cast<Id>(id)};
       Balls.push_back(W_ball);
     }
-    else if(id >= 1 && id <= 7)
+    else if(id == Ghost || id == (8 + Ghost))
     {
-      Balls.push_back(new Solids{x,y,static_cast<Id>(id)});
+      Balls.insert(Balls.begin(),new Ghost_Ball{x,y,static_cast<Id>(id)});
     }
-    else if(id >= 9 && id <= 15)
+    else if(id == Invis || id == (8 + Invis))
     {
-      Balls.push_back(new Stripes{x,y,static_cast<Id>(id)});
+      if(id == Invis)
+      {
+        Invisi_ball.insert({Col::SOLIDS,new InvisiBall{x,y,static_cast<Id>(id)}});
+        Balls.push_back(Invisi_ball.at(Col::SOLIDS));
+      }
+      else if(id == (8 + Invis))
+      {
+        Invisi_ball.insert({Col::STRIPES,new InvisiBall{x,y,static_cast<Id>(id)}});
+        Balls.push_back(Invisi_ball.at(Col::STRIPES));
+      }
     }
     else if(id == 8)
     {
-      B_ball = new B_Ball{x,y,static_cast<Id>(id)};
+      B_ball = new Heavy{x,y,static_cast<Id>(id)};
       Balls.push_back(B_ball);
+    }
+    else
+    {
+      Balls.push_back(new Normal{x,y,static_cast<Id>(id)});
     }
   }
 }

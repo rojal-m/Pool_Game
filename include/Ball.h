@@ -64,23 +64,33 @@ public:
   void InHand(sf::Vector2f&,Wall*,Hole*);
 };
 
-class B_Ball : public Ball
+class Heavy : public Ball
 {
+  bool change_mass;
 public:
-  B_Ball(float, float, Id);
+  Heavy(float, float, Id);
+  void update() override;
+  void fixed_mass();
 };
 
-class Stripes : public Ball
+class InvisiBall : public Ball
 {
   bool invis;
 public:
-  Stripes(float, float, Id);
+  InvisiBall(float, float, Id);
   void draw(sf::RenderWindow&) override;
+  void make_visible();
 };
 
-class Solids : public Ball
+class Ghost_Ball : public Ball
 {
 public:
-  Solids(float, float, Id);
+  Ghost_Ball(float, float, Id);
   bool collideWith(Ball &) override;
+};
+
+class Normal : public Ball
+{
+public:
+  Normal(float, float, Id);
 };

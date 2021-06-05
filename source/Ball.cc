@@ -5,6 +5,7 @@
 #include <iterator>
 #include <algorithm>
 #include <fstream>
+#include <random>
 #include <utility>
 #include "Ball.h"
 #include "SourceManager.h"
@@ -64,7 +65,6 @@ bool Ball::collideWith(Ball & B)
     return false;
   //find normal vector
   const auto n{position - B.position};
-
   //find distance
   const auto dist{length(n)};
   if(dist > BALL_DIAMETER)
@@ -74,7 +74,6 @@ bool Ball::collideWith(Ball & B)
     return true;
 
   collide.play();
-
 
   const auto mtd{n*((BALL_DIAMETER-dist)/dist)};
   position = position + mtd*(0.5f);
@@ -89,7 +88,6 @@ bool Ball::collideWith(Ball & B)
   const auto v1n{dot(un,velocity)};
   const auto v2n{dot(un,B.velocity)};
   const auto v2t{dot(ut,B.velocity)};
-
 
   const auto v1nT{(v1n*(mass-B.mass)+v2n*(2*B.mass))/(mass+B.mass)};
   const auto v1tT{v1t};
@@ -251,35 +249,66 @@ void W_Ball::InHand(sf::Vector2f& m,Wall* wall,Hole* hole)
 
 
 //-----------------------------------------------------------------------Heavy Ball---------------------------------------
-B_Ball::B_Ball(float x, float y, Id i)
-: Ball{x, y, i, 3.f}
+Heavy::Heavy(float x, float y, Id i)
+: Ball{x, y, i, 0.2f}, change_mass{true}
 {
   load_data();
 }
 
+void Heavy::update()
+{
+  if(!visible)
+    return;
+
+  position += velocity/delta;
+  velocity =  velocity*FRICTION;
+
+  if(length(velocity) < 15 && moving)
+  {
+    velocity.x = 0;
+    velocity.y = 0;
+    moving = false;
+    if (change_mass) {
+      random_device rd{};
+      uniform_real_distribution<float> rand_mass{5, 0.5};
+      mass = rand_mass(rd);
+    }
+  }
+}
+
+void Heavy::fixed_mass()
+{
+  change_mass = false;
+  mass = 0.16f;
+}
 //----------------------------------------------------------------------Invisi-Ball----------------------------------------
-Stripes::Stripes(float x, float y, Id i)
+InvisiBall::InvisiBall(float x, float y, Id i)
 :Ball{x, y, i, 0.16f}, invis{true}
 {
   load_data();
 }
-void Stripes::draw(RenderWindow& w)
+void InvisiBall::draw(RenderWindow& w)
 {
   if(!visible || invis)
     return;
   ball.setPosition(position);
   w.draw(ball);
 }
+void InvisiBall::make_visible()
+{
+  invis = false;
+}
 //----------------------------------------------------------------------Ghost Ball-----------------------------------------
-Solids::Solids(float x, float y, Id i)
+Ghost_Ball::Ghost_Ball(float x, float y, Id i)
 :Ball{x, y, i, 0.16f}
 {
   load_data();
 }
-bool Solids::collideWith(Ball & B)
+bool Ghost_Ball::collideWith(Ball & B)
 {
   if(B.color != Col::WHITE)
     return false;
+
   if(!visible || !B.visible )
     return false;
   //find normal vector
@@ -290,11 +319,10 @@ bool Solids::collideWith(Ball & B)
   if(dist > BALL_DIAMETER)
     return false;
 
-  if(ballInHand)
+  if(B.ballInHand)
     return true;
 
   collide.play();
-
 
   const auto mtd{n*((BALL_DIAMETER-dist)/dist)};
   position = position + mtd*(0.5f);
@@ -309,7 +337,6 @@ bool Solids::collideWith(Ball & B)
   const auto v1n{dot(un,velocity)};
   const auto v2n{dot(un,B.velocity)};
   const auto v2t{dot(ut,B.velocity)};
-
 
   const auto v1nT{(v1n*(mass-B.mass)+v2n*(2*B.mass))/(mass+B.mass)};
   const auto v1tT{v1t};
@@ -327,4 +354,10 @@ bool Solids::collideWith(Ball & B)
   moving = true;
   B.moving = true;
   return true;
+}
+//----------------------------------------------------------------------Normal Ball-----------------------------------------
+Normal::Normal(float x, float y, Id i)
+:Ball{x, y, i, 0.16f}
+{
+  load_data();
 }

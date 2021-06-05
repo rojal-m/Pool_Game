@@ -1,2 +1,2 @@
 power_interval direction_interval max_power Texture   SoundBuffer
-100            3                  2000      stick.png Strike.wav
+100            1                  2000      stick.png Strike.wav
